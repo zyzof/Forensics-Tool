@@ -126,7 +126,6 @@ void replace(Case current_case, string filename){
   put_output(current_case, "Done\n");
 
   string st = "Replacing char at pos: " + posString + " with " + replacement;
-  cout << st << endl;
   log_text(current_case, st.c_str());
   }
 

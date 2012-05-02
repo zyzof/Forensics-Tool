@@ -121,7 +121,6 @@ int search(Case current_case, bool hexInput){
   put_output(current_case, "Enter the directory to search\n");
   get_input(current_case, buff);
   dir = buff;
-  dir = "/home/cosc/student/jam296/Desktop";
   
   if (hexInput)
   {

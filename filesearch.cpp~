@@ -121,7 +121,8 @@ int search(Case current_case, bool hexInput){
   put_output(current_case, "Enter the directory to search\n");
   get_input(current_case, buff);
   dir = buff;
-  dir = "/home/cosc/student/jam296/Desktop";
+  
+  dir = ".";
   
   if (hexInput)
   {
@@ -221,8 +222,8 @@ void displayResults(Case current_case, vector<string> results){
       characters.*/
       openthis = "xdg-open " + path;
       system(openthis.c_str()); 
-      log_text(current_case, "Opening: ");
-      log_text(current_case, path.c_str());
+      string out = "Opening: " + path;
+      log_text(current_case, out.c_str());
     }
 
     else if (command.compare("hexedit") == 0)
