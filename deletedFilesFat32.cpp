@@ -3,6 +3,7 @@
 #include "case.h"
 #include "deletedFiles.h"
 #include "deletedFilesFat32.h"
+#include "server.h"
 
 using namespace std;
 
@@ -101,57 +102,64 @@ bool isAscii(unsigned char c) {
 	}
 }
 
-void printLongFileNameEntry(LONG_FILENAME_ENTRY entry) {
+void printLongFileNameEntry(Case c, LONG_FILENAME_ENTRY entry) {
+	stringstream streambuffer;
 	if(isAscii(entry.char1.data[0])) {
-		printf("%c", entry.char1.data[0]);
+		streambuffer << entry.char1.data[0];
 	}
 	if(isAscii(entry.char2.data[0])) {
-		printf("%c", entry.char2.data[0]);
+		streambuffer << entry.char2.data[0];
 	}
 	if(isAscii(entry.char3.data[0])) {
-		printf("%c", entry.char3.data[0]);
+		streambuffer << entry.char3.data[0];
 	}
 	if(isAscii(entry.char4.data[0])) {
-		printf("%c", entry.char4.data[0]);
+		streambuffer << entry.char4.data[0];
 	}
 	if(isAscii(entry.char5.data[0])) {
-		printf("%c", entry.char5.data[0]);
+		streambuffer << entry.char5.data[0];
 	}
 	if(isAscii(entry.char6.data[0])) {
-		printf("%c", entry.char6.data[0]);
+		streambuffer << entry.char6.data[0];
 	}
 	if(isAscii(entry.char7.data[0])) {
-		printf("%c", entry.char7.data[0]);
+		streambuffer << entry.char7.data[0];
 	}
 	if(isAscii(entry.char8.data[0])) {
-		printf("%c", entry.char8.data[0]);
+		streambuffer << entry.char8.data[0];
 	}
 	if(isAscii(entry.char9.data[0])) {
-		printf("%c", entry.char9.data[0]);
+		streambuffer << entry.char9.data[0];
 	}
 	if(isAscii(entry.char10.data[0])) {
-		printf("%c", entry.char10.data[0]);
+		streambuffer << entry.char10.data[0];
 	}
 	if(isAscii(entry.char11.data[0])) {
-		printf("%c", entry.char11.data[0]);
+		streambuffer << entry.char11.data[0];
 	}
 	if(isAscii(entry.char12.data[0])) {
-		printf("%c", entry.char12.data[0]);
+		streambuffer << entry.char12.data[0];
 	}
 	if(isAscii(entry.char13.data[0])) {
-		printf("%c", entry.char13.data[0]);
+		streambuffer << entry.char13.data[0];
 	}
+	
+	put_output_string(c, streambuffer.str());
 }
 
-void printShortFileName(DIRECTORY_ENTRY entry) {
-	printf("%c", entry.allocationStatus.data);
+void printShortFileName(Case c, DIRECTORY_ENTRY entry) {
+	stringstream streambuffer;
+	
+	streambuffer << entry.allocationStatus.data;
 	for (int i = 0; i < 7; i++) {
-		printf("%c", entry.fileName[i]);
+		streambuffer << entry.fileName[i];
 	}
-	printf(".");
+	streambuffer << ".";
 	for (int i = 0; i < 3; i++) {
-		printf("%c", entry.fileExtension[i]);
+		streambuffer << entry.fileExtension[i];
 	}
+	
+	put_output_string(c, streambuffer.str());
 }
 
 bool isPartOfLongFileName(DIRECTORY_ENTRY entry) {
@@ -162,78 +170,90 @@ bool isPartOfLongFileName(DIRECTORY_ENTRY entry) {
 	}
 }
 
-void printType(DIRECTORY_ENTRY entry) {
-	printf("   Type: ");
+void printType(Case c, DIRECTORY_ENTRY entry) {
+	stringstream streambuffer;
+	
+	put_output(c, "   Type: ");
 	if (entry.fileAttributes.data == 0x10) {
-		printf("directory\n");
+		put_output(c, "directory\n");
 	} else {
-		printf("file\n"); 	//TODO: account for readonly, system etc flags.
+		put_output(c, "file\n");
 	}
 }
 
-void printDate(WORD date) {
+void printDate(Case c, WORD date) {
+	stringstream streambuffer;
+	
 	unsigned int data = readWord(date);
 	int day = data & 31;
 	int month = (data & 480) >> 5;
 	int year = 1980 + ((data & 65042) >> 9);
-	printf("%d/%d/%d", day, month, year);
+	streambuffer << day << "/" << month << "/" << year;
+	
+	put_output_string(c, streambuffer.str());
 }
 
-void printTime(WORD time) {
+void printTime(Case c, WORD time) {
+	stringstream streambuffer;
+	
 	unsigned int data = readWord(time);
 	int hours = (data & 63488) >> 11;
 	int mins = (data & 1008) >> 4;
 	int secs = (data & 15) * 2;
 	
 	if (hours < 10) {
-		printf("0%d:", hours);
-	} else {
-		printf("%d:", hours);
+		streambuffer << "0";
 	}
+	
+	streambuffer << hours << ":";
 	
 	if (mins < 10) {
-		printf("0%d:", mins);
-	} else {
-		printf("%d:", mins);
+		streambuffer << "0";
 	}
+	streambuffer << mins << ":";
 	
 	if (secs < 10) {
-		printf("0%d", secs);
-	} else {
-		printf("%d", secs);
+		streambuffer << "0";
 	}
+	streambuffer << secs;
+	
+	put_output_string(c, streambuffer.str());
 }
 
-void printCreationTime(DIRECTORY_ENTRY entry) {
-	printf("   Created: ");
-	printDate(entry.creationDate);
-	printf(" ");
-	printTime(entry.creationTimeHoursMinutesSeconds);
-	printf("\n");
+void printCreationTime(Case c, DIRECTORY_ENTRY entry) {
+	stringstream streambuffer;
+	
+	put_output(c, "   Created: ");
+	
+	printDate(c, entry.creationDate);
+	put_output(c, " ");
+	printTime(c, entry.creationTimeHoursMinutesSeconds);
+	put_output(c, "\n");
 }
 
-void printLastAccessedTime(DIRECTORY_ENTRY entry) {
-	printf("   Last accessed: ");
-	printDate(entry.accessDate);
-	printf("\n");
+void printLastAccessedTime(Case c, DIRECTORY_ENTRY entry) {
+	put_output(c, "   Last accessed: ");
+	printDate(c, entry.accessDate);
+	put_output(c, "\n");
 }
 
-void printLastModifiedtime(DIRECTORY_ENTRY entry) {
-	printf("   Last modified: ");
-	printDate(entry.modifiedDate);
-	printf(" ");
-	printTime(entry.modifiedTime);
-	printf("\n");
+void printLastModifiedtime(Case c, DIRECTORY_ENTRY entry) {
+	put_output(c, "   Last modified: ");
+	printDate(c, entry.modifiedDate);
+	put_output(c, " ");
+	printTime(c, entry.modifiedTime);
+	put_output(c, "\n");
 }
 
-void printRemainingFileAttributes(DIRECTORY_ENTRY entry) {
-	printType(entry);
-	printCreationTime(entry);
-	printLastAccessedTime(entry);
-	printLastModifiedtime(entry);	
+void printRemainingFileAttributes(Case c, DIRECTORY_ENTRY entry) {
+	printType(c, entry);
+	printCreationTime(c, entry);
+	printLastAccessedTime(c, entry);
+	printLastModifiedtime(c, entry);	
 }
 
-int listDeletedFilesFat32(int disk_fd) {
+int listDeletedFilesFat32(Case c, int disk_fd) {
+	stringstream streambuffer;
 	int deletedFileCount = 0;
 	
 	unsigned long long rootDirLocation = getRootDirLocation(disk_fd);
@@ -248,8 +268,9 @@ int listDeletedFilesFat32(int disk_fd) {
 		
 		if (isDeletedEntry(entry)) {
 			deletedFileCount++;
-			printf("Deleted file found:\n ");
-			printf("  File name: ");
+			put_output(c, "Deleted file found:\n");
+			put_output(c, "   File name: ");
+			
 			while (isPartOfLongFileName(entry)) {
 				fileNameRecords++;
 				hasLongFileName = true;
@@ -262,17 +283,18 @@ int listDeletedFilesFat32(int disk_fd) {
 				for (int i = 0; i <= fileNameRecords; i++) {
 					rootDirLocation -= 32;
 					n = pread(disk_fd, &fileNameEntry, sizeof(LONG_FILENAME_ENTRY), rootDirLocation);
-					printLongFileNameEntry(fileNameEntry);
+					printLongFileNameEntry(c, fileNameEntry);
 				}
 				
 				rootDirLocation += (fileNameRecords+1) * 32;
 			} else {
-				printShortFileName(entry);
+				printShortFileName(c, entry);
 			}
-			printf("\n");
-			printRemainingFileAttributes(entry);
+			put_output(c, "\n");
 			
-			printf("\n\n");
+			printRemainingFileAttributes(c, entry);
+			
+			put_output(c, "\n\n");
 		}
 		rootDirLocation += 32;
 		n = pread(disk_fd, &entry, sizeof(DIRECTORY_ENTRY), rootDirLocation);

@@ -26,6 +26,7 @@ void *talker(void *p) {
     char in_buffer[BUFFER_SIZE] = { '\0' };
     char out_buffer[BUFFER_SIZE] = { '\0' };
     int n = 0;
+
     Case current_case = { NULL, NULL, NULL, 0, the_socket };
 
     while(server_running && connected) {

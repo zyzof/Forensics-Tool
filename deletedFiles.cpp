@@ -37,35 +37,38 @@ void listDeletedFiles(Case current_case) {
 	int disk_fd;
 	int deletedFileCount = 0;
 	stringstream log;
+	stringstream buffer;
 	
 	
-	cout << "Enter the name of the drive you want to search for deleted files on: " << endl;
-	cin >> disk;	
+	put_output(current_case, "Enter the name of the drive you want to search for deleted files on: ");
+	disk = get_input_string(current_case);
 	
 	disk_fd = open(disk.c_str(), O_RDONLY | O_NONBLOCK);
 	
 	if (disk_fd == -1) {
-		cout << "Could not open " << disk << " for reading." << endl;
+		buffer << "Could not open " << disk << " for reading." << endl;
+		put_output_string(current_case, buffer.str());
 		return;
 	}
 	
-	cout << "Searching for deleted files on " << disk << "..." << endl << endl;
+	buffer << "Searching for deleted files on " << disk << "..." << endl << endl;
+	put_output_string(current_case, buffer.str());
 	
 	LONGLONG oemId;
 	pread(disk_fd, &oemId, sizeof(LONGLONG), 0x03);
 	
-	char buffer[4];
+	char oemBuffer[4];
 	for (int i = 0; i < 4; i++) {
-		buffer[i] = (char)oemId.data[i];
+		oemBuffer[i] = (char)oemId.data[i];
 	}
 	
 	log << "Listed deleted files on ";
-	if (strncmp(buffer, "NTFS", 4) == 0) {
+	if (strncmp(oemBuffer, "NTFS", 4) == 0) {
 		log << " NTFS drive ";
-		deletedFileCount += listDeletedFilesNtfs(disk_fd);
+		deletedFileCount += listDeletedFilesNtfs(current_case, disk_fd);
 	} else {
 		log << " FAT32 drive ";
-		deletedFileCount += listDeletedFilesFat32(disk_fd);
+		deletedFileCount += listDeletedFilesFat32(current_case, disk_fd);
 	}
 	log << disk << ". ";
 	log << deletedFileCount << " deleted files found.";
