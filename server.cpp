@@ -102,10 +102,9 @@ void get_input(Case current_case, char *input) {
         do {
             n = read(current_case.socket, input, BUFFER_SIZE);
         } while(!n);
-        input[n] = '\0';
     }
     
-    
+    input[n-1] = '\0';
 }
 
 /*

@@ -103,10 +103,10 @@ int searchFile(string path, vector<string> keywords, bool hex){
   	    if (found!=string::npos)
             {            
 	        //Found, return 0.
+		infile.close();
 	        return 0;
             }	   
-	}
-	
+	}	
     }
     infile.close();
     //Not found, return 1.
@@ -115,21 +115,18 @@ int searchFile(string path, vector<string> keywords, bool hex){
 
 int search(Case current_case, bool hexInput){
   vector<string> results;
-  char buff[BUFFER_SIZE] = { '\0' };
   string dir;
   string findme;
   char buffer[256] = { '\0' }; 
   vector<string> keywords;
   put_output(current_case, "Enter the directory to search\n");
-  get_input(current_case, buff);
-  dir = buff;
+  dir = get_input_string(current_case);
   
   if (hexInput)
   {
       put_output(current_case, "Enter Hex String (e.g. 66757A7A)\n");
-      
       get_input(current_case, buffer);
-      findme = buffer;
+      findme = string(buffer);
   }
   else
   {
@@ -142,7 +139,7 @@ int search(Case current_case, bool hexInput){
  	{
    		buffer[i] = tolower(buffer[i]);
   	}
-	findme = buffer;
+	findme = string(buffer);
   }
 
   string s = "Searching for " + findme + " in " + dir;

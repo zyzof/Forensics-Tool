@@ -1,2 +1,2 @@
 
-int listDeletedFilesFat32(int disk_fd);
+int listDeletedFilesFat32(Case c, int disk_fd);
