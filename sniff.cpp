@@ -375,6 +375,7 @@ void start_sniff(Case theCase) {
     while (!devSelected) {
         put_output(currentCase, "Enter device to sniff: ");
         get_input(currentCase, devBuff);
+        printf("Blah: %s\n", devBuff);
         sniffDev = devBuff;
         if (devSet.count(sniffDev) == 0) {
             put_output(currentCase, "\nUnknown device entered. Possible devices are: ");

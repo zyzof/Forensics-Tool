@@ -104,7 +104,7 @@ void get_input(Case current_case, char *input) {
         } while(!n);
     }
     
-    input[n-1] = '\0';
+    input[n] = '\0';
 }
 
 /*

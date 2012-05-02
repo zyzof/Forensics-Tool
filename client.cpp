@@ -13,12 +13,16 @@
 #include "constants.h"
 #include "cli.h"
 
+pthread_mutex_t read_mutex;
+
 void *threaded_text(void *p) {
     int the_socket = *(int *)p;
     char buffer[BUFFER_SIZE] = { '\0' };
     int n = 0;
     while(the_socket == *(int *)p) { /* While this open socket has not changed */
+        pthread_mutex_lock(&read_mutex);
         n = read(the_socket, buffer, BUFFER_SIZE);
+        pthread_mutex_unlock(&read_mutex);
         buffer[n] = '\0';
         if(n) {
             printf("%s", buffer);
@@ -34,6 +38,8 @@ void remote_access(char *ip) {
     struct addrinfo *target_address_information = NULL;
     int the_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     int n = 0;
+    
+    pthread_mutex_init(&read_mutex, NULL);
 
     struct addrinfo hints;
     memset(&hints, 0, sizeof(struct addrinfo));
@@ -89,13 +95,22 @@ void remote_access(char *ip) {
         usleep(100000);
 
         /* display output */
+        pthread_mutex_lock(&read_mutex);
         n = read(the_socket, out_buffer, BUFFER_SIZE);
+        pthread_mutex_unlock(&read_mutex);
+        if (n < 0) {
+            n = 0;
+        }
         out_buffer[n] = '\0';
         while(n > 0) {
             printf(out_buffer);
+            pthread_mutex_lock(&read_mutex);
             n = read(the_socket, out_buffer, BUFFER_SIZE);
+            pthread_mutex_unlock(&read_mutex);
             out_buffer[n] = '\0';
         }
         
     }
+    
+    pthread_mutex_destroy(&read_mutex);
 }
