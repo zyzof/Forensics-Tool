@@ -26,6 +26,7 @@ void *threaded_text(void *p) {
         buffer[n] = '\0';
         if(n) {
             printf("%s", buffer);
+            fflush(stdout);
         }
         buffer[0] = '\0';
     }

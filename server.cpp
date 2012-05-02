@@ -102,9 +102,8 @@ void get_input(Case current_case, char *input) {
         do {
             n = read(current_case.socket, input, BUFFER_SIZE);
         } while(!n);
+        input[n] = '\0';
     }
-    
-    input[n-1] = '\0';
 }
 
 /*
@@ -122,6 +121,7 @@ void put_output(Case current_case, const char *output) {
     if(current_case.local) {
         /* We want to write a line to the local terminal */
         printf(output);
+        fflush(stdout);
     }
     else {
         /*We want to write a line to the remote client */
