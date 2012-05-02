@@ -22,6 +22,8 @@ int search(Case current_case, bool hexInput);
 void displayResults(Case current_case, vector<string> results);
 
 string getPath(vector<string> results, int selection);
+
+int getSelection(Case current_case, int size);
  
 int traverse(string path, vector<string> keywords, vector<string> &results, bool hex) {
   struct dirent *entry;
@@ -122,8 +124,6 @@ int search(Case current_case, bool hexInput){
   get_input(current_case, buff);
   dir = buff;
   
-  dir = ".";
-  
   if (hexInput)
   {
       put_output(current_case, "Enter Hex String (e.g. 66757A7A)\n");
@@ -145,10 +145,8 @@ int search(Case current_case, bool hexInput){
 	findme = buffer;
   }
 
-
   string s = "Searching for " + findme + " in " + dir;
   put_output(current_case, s.c_str());
-
   
   istringstream iss(findme);
   stringstream words;
@@ -175,8 +173,6 @@ int search(Case current_case, bool hexInput){
 
 void displayResults(Case current_case, vector<string> results){
   string command;
-  string selectionString;
-  int selection;
   vector<string>::iterator it;
   string openthis;
   string path;    
@@ -188,6 +184,7 @@ void displayResults(Case current_case, vector<string> results){
   if (results.size() > 0){
   while (true)
   {
+    //Print out the results.
     for (it=results.begin(); it!=results.end(); ++it)
     {
        stringstream out;
@@ -201,19 +198,9 @@ void displayResults(Case current_case, vector<string> results){
     command = get_input_string(current_case);
     if (command.compare("back") == 0){return;}
     
-    put_output(current_case, "Enter the number you wish to open\n");
-    selectionString = get_input_string(current_case);
-    selection = atoi(selectionString.c_str());
-
-    while (selection > results.size() || selection <= 0)
-    {
-      put_output(current_case, "Selection out of bounds.\nTry another number\n");
-      selectionString = get_input_string(current_case);;
-      selection = atoi(selectionString.c_str());
-    }
-    
     if (command.compare("open") == 0)
     {
+      int selection = getSelection(current_case, results.size());
       path = getPath(results, selection);
       /*This creates a string instruction that will be run by the system.
       the command xdg-open opens the file in the default program. 
@@ -228,18 +215,35 @@ void displayResults(Case current_case, vector<string> results){
 
     else if (command.compare("hexedit") == 0)
     {
-      path = getPath(results, selection);
-      hexEdit(current_case, results.at(selection-1));
-      string out = "Hexediting: " + path;
-      log_text(current_case, out.c_str());
+	int selection = getSelection(current_case, results.size());
+        path = getPath(results, selection);
+        hexEdit(current_case, results.at(selection-1));
+        string out = "Hexediting: " + path;
+        log_text(current_case, out.c_str());
     }
   }
 }
   return;
 }
 
+int getSelection(Case current_case, int size){
+    string selectionString;
+    int selection;
+    put_output(current_case, "Enter the number you wish to open\n");
+    selectionString = get_input_string(current_case);
+    selection = atoi(selectionString.c_str());
+
+    while (selection > size || selection <= 0)
+    {
+      put_output(current_case, "Selection out of bounds.\nTry another number\n");
+      selectionString = get_input_string(current_case);;
+      selection = atoi(selectionString.c_str());
+    }
+    return selection;
+}
+
 string getPath(vector<string> results, int selection){
-  //Adjust for the 0 index
+  //Adjust to the 0 index
   selection-=1;
   string path = "\'" + results.at(selection) + "\'";
   return path;
