@@ -122,6 +122,8 @@ int search(Case current_case, bool hexInput){
   get_input(current_case, buff);
   dir = buff;
   
+  dir = ".";
+  
   if (hexInput)
   {
       put_output(current_case, "Enter Hex String (e.g. 66757A7A)\n");
