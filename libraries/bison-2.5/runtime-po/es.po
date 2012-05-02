@@ -1,0 +1,85 @@
+# Mensajes en español para GNU Bison.
+# Copyright (C) 1998 Free Software Foundation, Inc.
+# Nicolás García-Pedrajas <ngarcia-pedrajas@acm.org>, 1998.
+#
+# Corregido por:
+#
+# cll - Carlos Linares López        clinares@acm.org
+#                                   clinares@delicias.dia.fi.upm.es
+#
+# Notas:
+#
+# 1. Nicolás, en algunas ocasiones notarás que algunos `msgstr' no están
+# indentados como los `msgid'. No te preocupes, eso es porque yo utilizo
+# el `po-mode' de Emacs, ... Él es el responsable de esas indentaciones
+# del `msgstr' :)
+#
+# 2. Todos los comentarios que contengan "Duda:" debieran revisarse.
+#
+# --------------------------------------------------------------------
+# En mi opinión has hecho un excelente trabajo y te animo a que sigas
+# manteniendo esta traducción y a que lo intentes con otras.
+#
+# (¡te lo dice el tío que ha traducido el paquete más grande: 1406
+# mensajes en el clisp!)
+#
+# 						      Carlos Linares
+# --------------------------------------------------------------------
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU bison 1.875\n"
+"Report-Msgid-Bugs-To: bug-bison@gnu.org\n"
+"POT-Creation-Date: 2011-05-14 18:25-0400\n"
+"PO-Revision-Date: 2003-01-02 12:47+0100\n"
+"Last-Translator: Nicolás García-Pedrajas <ngarcia-pedrajas@acm.org>\n"
+"Language-Team: Spanish <es@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8-bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: data/glr.c:923 data/yacc.c:727
+msgid "syntax error: cannot back up"
+msgstr ""
+
+#: data/glr.c:1803
+msgid "syntax is ambiguous"
+msgstr ""
+
+#: data/glr.c:2094 data/glr.c:2172 data/glr.c:2210 data/glr.c:2480
+#: data/lalr1.cc:941 data/lalr1.cc:961 data/yacc.c:1346 data/yacc.c:1870
+#: data/yacc.c:1876
+msgid "syntax error"
+msgstr ""
+
+#: data/glr.c:2173 data/lalr1.cc:942 data/yacc.c:1347
+#, c-format
+msgid "syntax error, unexpected %s"
+msgstr ""
+
+#: data/glr.c:2174 data/lalr1.cc:943 data/yacc.c:1348
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s"
+msgstr ""
+
+#: data/glr.c:2175 data/lalr1.cc:944 data/yacc.c:1349
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s or %s"
+msgstr ""
+
+#: data/glr.c:2176 data/lalr1.cc:945 data/yacc.c:1350
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s or %s or %s"
+msgstr ""
+
+#: data/glr.c:2177 data/lalr1.cc:946 data/yacc.c:1351
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s or %s or %s or %s"
+msgstr ""
+
+#: data/glr.c:2540 data/yacc.c:1434 data/yacc.c:1436 data/yacc.c:1632
+#: data/yacc.c:2025
+msgid "memory exhausted"
+msgstr "memoria agotada"

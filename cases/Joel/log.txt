@@ -1,5 +1,0 @@
-[01-05-2012 22:21:34] Case opened.
-[01-05-2012 22:21:47] Searching for
-[01-05-2012 22:21:47] hello
-[01-05-2012 22:21:47] man
-[01-05-2012 22:21:47] /home/cosc/student/jam296/Desktop

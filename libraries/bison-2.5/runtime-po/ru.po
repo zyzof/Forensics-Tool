@@ -1,0 +1,66 @@
+# Translation of bison-runtime messages to Russian
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the bison package.
+#
+# Dmitry S. Sivachenko <dima@Chg.RU>, 1999,2000,2001,2002.
+# Dimitriy Ryazantcev <DJm00n@mail.ru>, 2009.
+# Pavel Maryanov <acid_jack@ukr.net>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bison-runtime 2.4\n"
+"Report-Msgid-Bugs-To: bug-bison@gnu.org\n"
+"POT-Creation-Date: 2011-05-14 18:25-0400\n"
+"PO-Revision-Date: 2009-02-04 19:48+0200\n"
+"Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
+"Language-Team: Russian <gnu@mx.ru>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: data/glr.c:923 data/yacc.c:727
+msgid "syntax error: cannot back up"
+msgstr "синтаксическая ошибка: не удалось создать резервную копию"
+
+#: data/glr.c:1803
+msgid "syntax is ambiguous"
+msgstr "неоднозначный синтаксис"
+
+#: data/glr.c:2094 data/glr.c:2172 data/glr.c:2210 data/glr.c:2480
+#: data/lalr1.cc:941 data/lalr1.cc:961 data/yacc.c:1346 data/yacc.c:1870
+#: data/yacc.c:1876
+msgid "syntax error"
+msgstr "синтаксическая ошибка"
+
+#: data/glr.c:2173 data/lalr1.cc:942 data/yacc.c:1347
+#, c-format
+msgid "syntax error, unexpected %s"
+msgstr "синтаксическая ошибка, непредвиденная %s"
+
+#: data/glr.c:2174 data/lalr1.cc:943 data/yacc.c:1348
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s"
+msgstr "синтаксическая ошибка, непредвиденная %s, ожидается %s"
+
+#: data/glr.c:2175 data/lalr1.cc:944 data/yacc.c:1349
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s or %s"
+msgstr "синтаксическая ошибка, непредвиденная %s, ожидается %s или %s"
+
+#: data/glr.c:2176 data/lalr1.cc:945 data/yacc.c:1350
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s or %s or %s"
+msgstr "синтаксическая ошибка, непредвиденная %s, ожидается %s или %s, или %s"
+
+#: data/glr.c:2177 data/lalr1.cc:946 data/yacc.c:1351
+#, c-format
+msgid "syntax error, unexpected %s, expecting %s or %s or %s or %s"
+msgstr ""
+"синтаксическая ошибка, непредвиденная %s, ожидается %s или %s, или %s, или %s"
+
+#: data/glr.c:2540 data/yacc.c:1434 data/yacc.c:1436 data/yacc.c:1632
+#: data/yacc.c:2025
+msgid "memory exhausted"
+msgstr "недостаточно памяти"
