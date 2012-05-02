@@ -88,46 +88,57 @@ typedef struct _FILENAME_ATTRIBUTE {
 
 // HELPER METHODS:
 
-int getBytesPerSector(int disk) {
+int getBytesPerSector(Case c, int disk) {
+	stringstream streambuffer;
 	WORD raw;
 	pread(disk, &raw, 2, 0x0B);
 	int bytesPerSector = readWord(raw);
 	
-	printf("  Number of bytes per sector: %d\n", bytesPerSector);
+	streambuffer << "  Number of bytes per sector: " << bytesPerSector << endl;
+	put_output_string(c, streambuffer.str());
 	return bytesPerSector;
 }
 
-int getSectorsPerCluster(int disk) {
+int getSectorsPerCluster(Case c, int disk) {
+	stringstream streambuffer;
 	BYTE raw;
 	pread(disk, &raw, 1, 0x0D);
 	int sectorsPerCluster = readByte(raw);
 	
-	printf("  Number of sectors per cluster: %d\n", sectorsPerCluster);
+	streambuffer << "  Number of sectors per cluster: " << sectorsPerCluster << endl;
+	put_output_string(c, streambuffer.str());
 	return sectorsPerCluster;
 }
 
-unsigned long long getMftClusterNumber(int disk) {
+unsigned long long getMftClusterNumber(Case c, int disk) {
+	stringstream streambuffer;
 	LONGLONG raw;
 	
 	pread(disk, &raw, sizeof(LONGLONG), 0x30);
 	
 	unsigned long long mftClusterNumber = readLongLong(raw);
 					   
-	printf("  $MFT cluster number: %llu\n", mftClusterNumber);
+	streambuffer << "  $MFT cluster number: " << mftClusterNumber << endl;
+	put_output_string(c, streambuffer.str());
+	
 	return mftClusterNumber;
 }
 
-unsigned long long getMftOffset(int disk) {
-	int bytesPerSector = getBytesPerSector(disk);
-	int sectorsPerCluster = getSectorsPerCluster(disk);
+unsigned long long getMftOffset(Case c, int disk) {
+	stringstream streambuffer;
+	
+	int bytesPerSector = getBytesPerSector(c, disk);
+	int sectorsPerCluster = getSectorsPerCluster(c, disk);
 	
 	int bytesPerCluster = bytesPerSector * sectorsPerCluster;
-	printf("  Bytes per cluster: %d\n", bytesPerCluster);
+	streambuffer << "  Bytes per cluster: " << bytesPerCluster << endl;
 	
-	unsigned long long mftClusterNumber = getMftClusterNumber(disk);
+	unsigned long long mftClusterNumber = getMftClusterNumber(c, disk);
 	unsigned long long mftOffset = mftClusterNumber * bytesPerCluster;
 	
-	printf(" ...$MFT found at byte offset: %llu\n\n", mftOffset);
+	streambuffer << " ...$MFT found at byte offset: " << mftOffset << endl << endl;
+	
+	put_output_string(c, streambuffer.str());
 	return mftOffset;
 }
 
@@ -162,77 +173,93 @@ unsigned long long getAttributeDataLength(NTFS_RESIDENT_ATTRIBUTE attribute) {
 	return attrDataLength;
 }
 
-void printType(FILENAME_ATTRIBUTE attr) {
+void printType(Case c, FILENAME_ATTRIBUTE attr) {
+	stringstream streambuffer;
+	
 	long flags = readDWord(attr.dwFlags);
 	
-	cout << "   Type: ";
-	if (flags == flags & 0x0001) {
-		cout << "read-only ";
+	streambuffer << "   Type: ";
+	if (flags & 0x0001) {
+		streambuffer << "read-only ";
 	}
-	if (flags == flags & 0x0002) {
-		cout << "hidden ";
+	if (flags & 0x0002) {
+		streambuffer << "hidden ";
 	}
-	if (flags == flags & 0x0004) {
-		cout << "system ";
+	if (flags & 0x0004) {
+		streambuffer << "system ";
 	}
-	if (flags == flags & 0x0020) {
-		cout << "archive ";
+	if (flags & 0x0020) {
+		streambuffer << "archive ";
 	}
-	if (flags == flags & 0x0040) {
-		cout << "device ";
+	if (flags & 0x0040) {
+		streambuffer << "device ";
 	}
-	if (flags == flags & 0x0080) {
-		cout << "normal ";
+	if (flags & 0x0080) {
+		streambuffer << "normal ";
 	}
-	if (flags == flags & 0x0100) {
-		cout << "temporary ";
+	if (flags & 0x0100) {
+		streambuffer << "temporary ";
 	}
-	if (flags == flags & 0x0200) {
-		cout << "sparse file ";
+	if (flags & 0x0200) {
+		streambuffer << "sparse file ";
 	}
-	if (flags == flags & 0x0400) {
-		cout << "reparse point ";
+	if (flags & 0x0400) {
+		streambuffer << "reparse point ";
 	}
-	if (flags == flags & 0x0800) {
-		cout << "compressed ";
+	if (flags & 0x0800) {
+		streambuffer << "compressed ";
 	}
-	if (flags == flags & 0x1000) {
-		cout << "offline ";
+	if (flags & 0x1000) {
+		streambuffer << "offline ";
 	}
-	if (flags == flags & 0x2000) {
-		cout << "not content indexed ";
+	if (flags & 0x2000) {
+		streambuffer << "not content indexed ";
 	}
-	if (flags == flags & 0x4000) {
-		cout << "encrypted ";
+	if (flags & 0x4000) {
+		streambuffer << "encrypted ";
 	}
-	if (flags == flags & 0x10000000) {
-		cout << "directory" << endl;
-	} else if ( flags == flags & 0x20000000) {
-		cout << "index view" << endl;
+	if (flags & 0x10000000) {
+		streambuffer << "directory" << endl;
+	} else if (flags & 0x20000000) {
+		streambuffer << "index view" << endl;
 	} else {
-		cout << "file" << endl;
+		streambuffer << "file" << endl;
 	}
+	
+	put_output_string(c, streambuffer.str());
 }
 
-void printCreationTime(FILENAME_ATTRIBUTE attr) {
+void printCreationTime(Case c, FILENAME_ATTRIBUTE attr) {
+	stringstream streambuffer;
+	
 	unsigned long long creationTimeRaw = readLongLong(attr.n64CreationTime);
 	
-	cout << "   Creation time: " << creationTimeRaw << endl;
+	streambuffer << "   Creation time: " << creationTimeRaw << endl;
+	put_output_string(c, streambuffer.str());
+	
 }
 
-void printLastModifiedTime(FILENAME_ATTRIBUTE attr) {
+void printLastModifiedTime(Case c, FILENAME_ATTRIBUTE attr) {
+	stringstream streambuffer;
+	
 	unsigned long long modifiedTimeRaw = readLongLong(attr.n64AlteredTime);
 	
-	cout << "   Last modified: " << modifiedTimeRaw << endl;
+	streambuffer << "   Last modified: " << modifiedTimeRaw << endl;
+	put_output_string(c, streambuffer.str());
 }
 
-void printLastAccessedTime(FILENAME_ATTRIBUTE attr) {
+void printLastAccessedTime(Case c, FILENAME_ATTRIBUTE attr) {
+	stringstream streambuffer;
+	
 	unsigned long long lastAccessedTimeRaw = readLongLong(attr.n64ReadTime);
 	
-	cout << "   Last accessed: " << lastAccessedTimeRaw << endl;
+	streambuffer << "   Last accessed: " << lastAccessedTimeRaw << endl;
+	put_output_string(c, streambuffer.str());
 }
 
-void printFileNameAttribute(int disk, NTFS_RESIDENT_ATTRIBUTE attribute, unsigned long long attributeHeaderOffset) {
+void printFileNameAttribute(Case c, int disk, NTFS_RESIDENT_ATTRIBUTE attribute, unsigned long long attributeHeaderOffset) {
+	stringstream streambuffer;
+	
 	FILENAME_ATTRIBUTE fileNameAttribute;
 	
 	unsigned long long fileNameAttrOffset = attributeHeaderOffset + readWord(attribute.wAttrOffset);
@@ -249,12 +276,21 @@ void printFileNameAttribute(int disk, NTFS_RESIDENT_ATTRIBUTE attribute, unsigne
 		ss << fileNameAttribute.fileName[i*2];	//2 Bytes per char so desired char will be twice as far away
 	}
 	
-	cout << "Deleted file: \n   Name: " << ss.str() << endl;
+	streambuffer << "Deleted file: \n   Name: " << ss.str() << endl;
+	put_output_string(c, streambuffer.str());
+	streambuffer.str("");
 	
-	printType(fileNameAttribute);
-	//printCreationTime(fileNameAttribute);
-	//printLastModifiedTime(fileNameAttribute);
-	//printLastAccessedTime(fileNameAttribute);
+	printType(c, fileNameAttribute);
+	
+	/*
+	 * Not currently working correctly. 
+	 * Apparently time values are 100nanosecond intervals since 00:00:00 Jan 1, 1960. 
+	 * But the values I've been getting would mean it's currently about 00:03:00 Jan 1, 1960...
+	 *
+	 * printCreationTime(fileNameAttribute);
+	 * printLastModifiedTime(fileNameAttribute);
+	 * printLastAccessedTime(fileNameAttribute);
+	 */
 }
 
 bool isMftRecord(NTFS_MFT_FILE_ENTRY_HEADER header) {
@@ -311,20 +347,26 @@ bool isFilenameAttribute(NTFS_RESIDENT_ATTRIBUTE attribute) {
 
 
 //MAIN METHOD:
-int listDeletedFilesNtfs(int disk_fd) {
+int listDeletedFilesNtfs(Case c, int disk_fd) {
+	stringstream streambuffer;
+	
 	int deletedFileCount = 0;
 	unsigned long long mftOffset;
 	
 	unsigned char buffer[1024];
 	
-	cout << " Finding $MFT..." << endl;
-	mftOffset = getMftOffset(disk_fd);
+	streambuffer << " Finding $MFT..." << endl;
+	put_output_string(c, streambuffer.str());
+	streambuffer.str("");
+	mftOffset = getMftOffset(c, disk_fd);
 	
 	
 	NTFS_MFT_FILE_ENTRY_HEADER header;
 	NTFS_RESIDENT_ATTRIBUTE attribute;
 	
-	cout << "Listing deleted files..." << endl;
+	streambuffer << "Listing deleted files..." << endl;
+	put_output_string(c, streambuffer.str());
+	streambuffer.str("");
 	header = getFileEntryHeader(disk_fd, mftOffset);
 	while (isMftRecord(header)) {
 		
@@ -344,7 +386,7 @@ int listDeletedFilesNtfs(int disk_fd) {
 						stringstream ssCount;
 						ssCount << deletedFileCount;
 						
-						printFileNameAttribute(disk_fd, attribute, attrOffset);
+						printFileNameAttribute(c, disk_fd, attribute, attrOffset);
 					}
 					
 					attrOffset += sizeof(NTFS_RESIDENT_ATTRIBUTE) + attrDataLength;
@@ -364,7 +406,9 @@ int listDeletedFilesNtfs(int disk_fd) {
 		header = getFileEntryHeader(disk_fd, mftOffset);
 	}
 	
-	cout << "Reached end of $MFT" << endl << endl;
+	streambuffer << "Reached end of $MFT" << endl << endl;
+	put_output_string(c, streambuffer.str());
+	streambuffer.str("");
 	
 	return deletedFileCount;
 }

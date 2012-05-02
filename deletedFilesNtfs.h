@@ -1,2 +1,3 @@
 
-int listDeletedFilesNtfs(int disk_fd);
+
+int listDeletedFilesNtfs(Case c, int disk_fd);
