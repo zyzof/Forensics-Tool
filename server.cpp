@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <dirent.h>
+#include <string>
 
 #include "case.h"
 #include "server.h"
@@ -14,6 +15,7 @@
 #include "cli.h"
 #include "constants.h" 
 
+using namespace std;
 
 extern int server_running;
 
@@ -101,6 +103,19 @@ void get_input(Case current_case, char *input) {
             n = read(current_case.socket, input, BUFFER_SIZE);
         } while(!n);
     }
+    
+    input[n-1] = '\0';
+}
+
+/*
+ * Wrapper for get_input using c++ strings
+ */
+string get_input_string(Case current_case) {
+	char buffer[BUFFER_SIZE] = {'\0'};
+	
+	get_input(current_case, buffer);
+	
+	return string(buffer);
 }
 
 void put_output(Case current_case, const char *output) {
@@ -112,4 +127,11 @@ void put_output(Case current_case, const char *output) {
         /*We want to write a line to the remote client */
         write(current_case.socket, output, strnlen(output, BUFFER_SIZE));
     }
+}
+
+/*
+ * Wrapper for put_output for C++ strings
+ */
+void put_output_string(Case current_case, string output) {
+	put_output(current_case, output.c_str());
 }
