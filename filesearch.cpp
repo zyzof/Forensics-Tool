@@ -126,7 +126,7 @@ int search(Case current_case, bool hexInput){
   {
       put_output(current_case, "Enter Hex String (e.g. 66757A7A)\n");
       get_input(current_case, buffer);
-      findme = buffer;
+      findme = string(buffer);
   }
   else
   {
@@ -139,7 +139,7 @@ int search(Case current_case, bool hexInput){
  	{
    		buffer[i] = tolower(buffer[i]);
   	}
-	findme = buffer;
+	findme = string(buffer);
   }
 
   string s = "Searching for " + findme + " in " + dir;
