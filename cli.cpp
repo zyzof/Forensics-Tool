@@ -62,6 +62,7 @@ void main_menu_help() {
 
     printf("\nFile commands\n");
     printf("-----------------\n");
+    printf("navigator - Open the file navigator.\n");
     printf("search - Search for files by directory and keyword.\n");
     printf("hexfind - Search for files by directory and hex string.\n");
     printf("hexedit - Edit a file with the hex editor.\n");
@@ -112,7 +113,7 @@ Case parse(Case current_case, char *input, char *output) {
         }
         else if(!strncmp(input + 7, "off", 4)) {
             /* Turn off the server */
-            printf("Shutting down server...");
+            index += sprintf(output + index, "Shutting down server...");
             server_running = 0;
             /* === pthread joinr should go here === */
             printf("Done.\n");
@@ -261,8 +262,8 @@ Case parse(Case current_case, char *input, char *output) {
 
 /* packet sniffer */
     else if (!strncmp(input, "sniffer", 8)) {
-        fscanf(stdin, "%s", input);
-        if (current_case.log != NULL) {
+        input += 8;
+        if (current_case.log) {
             if (!strncmp(input, "start", 6)) {
                 start_sniff(current_case);
             }
@@ -284,8 +285,8 @@ Case parse(Case current_case, char *input, char *output) {
         network_devices();
     }
     else if (!strncmp(input, "psd", 4)) {
-        fscanf(stdin, "%s", input);
-        if (current_case.log != NULL) {
+        input += 4;
+        if (current_case.log) {
             if (!strncmp(input, "start", 6)) {
                 start_psd(current_case);
             }
@@ -296,6 +297,12 @@ Case parse(Case current_case, char *input, char *output) {
         else {
             printf("Error: No case is currently open.\n");
         }
+    }
+    
+    /* file navigator */
+    else if (!strncmp(input, "navigator", 10)) {
+        log_text(current_case, "File navigator opened.");
+        run_file_navigator();
     }
 
     return current_case;
