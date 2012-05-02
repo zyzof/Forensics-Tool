@@ -164,7 +164,7 @@ int print_extended(int disk_fd, unsigned char flags, unsigned int address, char 
         index += sprintf(output + index, "\n    Extended partition record at LBA %u:\n", address);
 
         /* Check for signature */
-        index += sprintf(output + index, "        EBR Signature: %p : %p. ", this_ebr[0x01FE], this_ebr[0x01FF]);
+        index += sprintf(output + index, "        EBR Signature: %p : %p. ", (void*) this_ebr[0x01FE], (void*) this_ebr[0x01FF]);
         if(this_ebr[0x01FE] == 0x55 && this_ebr[0x01FF] == 0xAA) {
             index += sprintf(output + index, "(Valid)\n");
         }
@@ -187,7 +187,7 @@ int print_extended(int disk_fd, unsigned char flags, unsigned int address, char 
         }
 
         /* Partition Type */
-        index += sprintf(output + index, "        Type: %p. (", this_ebr[0x01C2]);
+        index += sprintf(output + index, "        Type: %p. (", (void*) this_ebr[0x01C2]);
         index += print_type(this_ebr[0x01C2], output + index);
         index += sprintf(output + index, ")\n");
         
@@ -224,7 +224,7 @@ int print_primary(int disk_fd, unsigned char flags, char *output) {
 
     
     /* Check for MBR signature */
-    index += sprintf(output + index, "MBR Signature: %p : %p. ", disk_mbr[0x01FE], disk_mbr[0x01FF]);
+    index += sprintf(output + index, "MBR Signature: %p : %p. ", (void*) disk_mbr[0x01FE], (void*) disk_mbr[0x01FF]);
     if(disk_mbr[0x01FE] == 0x55 && disk_mbr[0x01FF] == 0xAA) {
         index += sprintf(output + index, "(Valid)\n");
     }
@@ -235,7 +235,7 @@ int print_primary(int disk_fd, unsigned char flags, char *output) {
     /* Look at the four primary partitions */
     for(partition = 0x01BE; partition < 0x01FE; partition += 0x10) {
         if(disk_mbr[partition + 0x04]) { /* If the partition type is not null */
-            index += sprintf(output + index, "\nPrimary partition record at MBR[%p]:\n", partition);
+            index += sprintf(output + index, "\nPrimary partition record at MBR[%p]:\n", (void*) partition);
         
             /* Status */
             switch(disk_mbr[partition]) {
@@ -251,7 +251,7 @@ int print_primary(int disk_fd, unsigned char flags, char *output) {
             }
 
             /* Partition Type */
-            index += sprintf(output + index, "    Type: %p. (", disk_mbr[partition + 0x04]);
+            index += sprintf(output + index, "    Type: %p. (", (void*) disk_mbr[partition + 0x04]);
             index += print_type(disk_mbr[partition + 0x04], output + index);
             index += sprintf(output + index, ")\n");
         
