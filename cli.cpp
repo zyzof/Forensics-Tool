@@ -266,19 +266,18 @@ Case parse(Case current_case, char *input, char *output) {
     }
 
 /* packet sniffer */
-    else if (!strncmp(input, "sniffer", 8)) {
-        input += 8;
+    else if (!strncmp(input, "sniffer ", 8)) {
         if (current_case.log) {
-            if (!strncmp(input, "start", 6)) {
+            if (!strncmp(input + 8, "start", 6)) {
                 start_sniff(current_case);
             }
-            else if (!strncmp(input, "stop", 5)) {
+            else if (!strncmp(input + 8, "stop", 5)) {
                 stop_sniff();
             }
-            else if (!strncmp(input, "show", 5)) {
+            else if (!strncmp(input + 8, "show", 5)) {
                 show_sniff();
             }
-            else if (!strncmp(input, "hide", 5)) {
+            else if (!strncmp(input + 8, "hide", 5)) {
                 hide_sniff();
             }
         }
@@ -289,13 +288,12 @@ Case parse(Case current_case, char *input, char *output) {
     else if (!strncmp(input, "netdev", 7)) {
         network_devices();
     }
-    else if (!strncmp(input, "psd", 4)) {
-        input += 4;
+    else if (!strncmp(input, "psd ", 4)) {
         if (current_case.log) {
-            if (!strncmp(input, "start", 6)) {
+            if (!strncmp(input + 4, "start", 6)) {
                 start_psd(current_case);
             }
-            else if (!strncmp(input, "stop", 5)) {
+            else if (!strncmp(input + 4, "stop", 5)) {
                 stop_psd();
             }
         }
