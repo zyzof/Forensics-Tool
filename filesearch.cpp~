@@ -221,8 +221,8 @@ void displayResults(Case current_case, vector<string> results){
       characters.*/
       openthis = "xdg-open " + path;
       system(openthis.c_str()); 
-      string out = "Opening: " + path;
-      log_text(current_case, out.c_str());
+      log_text(current_case, "Opening: ");
+      log_text(current_case, path.c_str());
     }
 
     else if (command.compare("hexedit") == 0)

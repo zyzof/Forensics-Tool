@@ -23,7 +23,7 @@
 #include "filesearch.h"
 #include "deletedFiles.h"
 #include "sniff.h"
-#include "navigator.h"
+#include <navigator.h>
 
 #define ESC 0x1B
 #define RED 31
