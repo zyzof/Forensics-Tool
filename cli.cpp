@@ -127,7 +127,7 @@ Case parse(Case current_case, char *input, char *output) {
     /* new */ 
     if(!strncmp(input, "new ", 4)) {
         if(!current_case.log) {
-            current_case = new_case(input + 4, output + index);
+            current_case = new_case(input + 4, output + index, current_case);
         }
         else {
             index += sprintf(output + index, "Error: Only one case may be open at a time.\n");
@@ -153,7 +153,7 @@ Case parse(Case current_case, char *input, char *output) {
     /* open <case name> */ 
     else if(!strncmp(input, "open ", 5)) {
         if(!current_case.log) {
-            current_case = open_case(input + 5, output + index);
+            current_case = open_case(input + 5, output + index, current_case);
         }
         else {
             sprintf(output + index, "A case is already open. The current case must be closed before a new one can be accessed.\n");

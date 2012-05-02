@@ -2,3 +2,4 @@ cases/*
 *.out
 filenavigator/filenav
 *~
+.nfs*

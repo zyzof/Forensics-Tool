@@ -73,17 +73,16 @@ void file_string(Case the_case, char *string) {
 
 
 /* Create a new case and open it */
-Case new_case(char *input, char *output) {
+Case new_case(char *input, char *output, Case the_case) {
     char buffer[BUFFER_SIZE] = { '\0' };
     sprintf(buffer, "./cases/%s/", input);
     mkdir(buffer, S_IRWXU | S_IRWXG);
 
-    return open_case(input, output);
+    return open_case(input, output, the_case);
 }
 
 /* Open a case. Returns the case structure */
-Case open_case(char *name, char *output) {
-    Case the_case = { NULL, NULL };
+Case open_case(char *name, char *output, Case the_case) {
     char buffer[BUFFER_SIZE] = { '\0' };
 
     sprintf(buffer, "./cases/%s", name);

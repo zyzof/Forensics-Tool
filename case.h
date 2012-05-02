@@ -19,10 +19,10 @@ int list_files(Case the_case, char *output);
 void  file_string(Case the_case, char *string);
 
 /* Create a new case and open it */
-Case new_case(char *input, char *output);
+Case new_case(char *input, char *output, Case the_case);
 
 /* Open a case */
-Case open_case(char *name, char *output);
+Case open_case(char *name, char *output, Case the_case);
 
 /* Close the current case */
 Case close_case(Case c, char *output);

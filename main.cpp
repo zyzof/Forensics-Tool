@@ -33,7 +33,7 @@ int case_manager() {
     int running = 1;
     int case_open = 0;
     int disk_fd = 0;
-    Case current_case = { NULL, NULL };
+    Case current_case = { NULL, NULL, NULL, 1, 0 };
     char input_buffer[BUFFER_SIZE] = { '\0' }; 
     char buffer_B[BUFFER_SIZE] = { '\0' };
     char output_buffer[BUFFER_SIZE] = { '\0' };
@@ -52,12 +52,11 @@ int case_manager() {
     while(running) {
         title();
         main_menu_help();
-
+        current_case.local = 1;
         printf("\nlocal > "); /* Command prompt */
 
         while(1) {
             index = 0;
-            
             gets(input_buffer);
 
             index += sprintf(output_buffer, "\n");
