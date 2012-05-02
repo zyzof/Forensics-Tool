@@ -103,6 +103,17 @@ void get_input(Case current_case, char *input) {
     }
 }
 
+/*
+ * Wrapper for get_input using c++ strings
+ */
+string get_input_string(Case current_case) {
+	char buffer[BUFFER_SIZE];
+	
+	get_input(current_case, buffer);
+	
+	return string(buffer);
+}
+
 void put_output(Case current_case, const char *output) {
     if(current_case.local) {
         /* We want to write a line to the local terminal */
@@ -112,4 +123,11 @@ void put_output(Case current_case, const char *output) {
         /*We want to write a line to the remote client */
         write(current_case.socket, output, strnlen(output, BUFFER_SIZE));
     }
+}
+
+/*
+ * Wrapper for put_output for C++ strings
+ */
+void put_output_string(Case current_case, string output) {
+	put_output(Case current_case, output.c_str());
 }
