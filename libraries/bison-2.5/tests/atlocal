@@ -1,0 +1,47 @@
+# tests/atlocal.  Generated from atlocal.in by configure.					-*- shell-script -*-
+# Configurable variable values for Bison test suite.
+
+# Copyright (C) 2000-2011 Free Software Foundation, Inc.
+
+# We need a C compiler.
+: ${CC='gcc -std=gnu99'}
+
+# We want no optimization.
+CFLAGS='-g   '
+
+# Sometimes a test group needs to ignore gcc warnings, so it locally
+# sets CFLAGS to this.
+NO_WERROR_CFLAGS='-g  '
+
+# We need `config.h'.
+CPPFLAGS="-I$abs_top_builddir/lib "
+
+# Is the compiler GCC?
+GCC='yes'
+
+# The C++ compiler.
+: ${CXX='g++'}
+
+# If 'exit 77'; skip all C++ tests; otherwise ':'.
+BISON_CXX_WORKS=':'
+
+# We want no optimization with C++, too.
+CXXFLAGS='-g   '
+
+# Are special link options needed?
+LDFLAGS=''
+
+# Are special libraries needed?
+LIBS="$abs_top_builddir/lib/libbison.a  "
+
+# Empty if no javac was found
+CONF_JAVAC=''
+
+# Empty if no Java VM was found
+CONF_JAVA='java'
+
+# Empty if no xsltproc was found
+: ${XSLTPROC='/usr/bin/xsltproc'}
+
+# We need egrep.
+: ${EGREP='/bin/grep -E'}
