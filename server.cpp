@@ -26,7 +26,7 @@ void *talker(void *p) {
     char in_buffer[BUFFER_SIZE] = { '\0' };
     char out_buffer[BUFFER_SIZE] = { '\0' };
     int n = 0;
-    Case current_case = { NULL, NULL, 0, the_socket };
+    Case current_case = { NULL, NULL, { '\0' }, 0, the_socket };
 
     while(server_running && connected) {
         
@@ -119,6 +119,7 @@ string get_input_string(Case current_case) {
 }
 
 void put_output(Case current_case, const char *output) {
+    
     if(current_case.local) {
         /* We want to write a line to the local terminal */
         printf(output);
