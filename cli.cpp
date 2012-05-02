@@ -199,6 +199,10 @@ Case parse(Case current_case, char *input, char *output) {
             index += sprintf(output + index, "Error: No case is currently open.\n");
         }
     }
+    
+    else if(!strncmp(input, "deletedfiles", 12)) {
+		listDeletedFiles(current_case);
+	}
 
 	    /* Search functions */
 

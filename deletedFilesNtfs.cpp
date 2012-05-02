@@ -166,10 +166,51 @@ void printType(FILENAME_ATTRIBUTE attr) {
 	long flags = readDWord(attr.dwFlags);
 	
 	cout << "   Type: ";
-	if (flags == 0x10000000) {
-		cout << "Directory" << endl;
+	if (flags == flags & 0x0001) {
+		cout << "read-only ";
+	}
+	if (flags == flags & 0x0002) {
+		cout << "hidden ";
+	}
+	if (flags == flags & 0x0004) {
+		cout << "system ";
+	}
+	if (flags == flags & 0x0020) {
+		cout << "archive ";
+	}
+	if (flags == flags & 0x0040) {
+		cout << "device ";
+	}
+	if (flags == flags & 0x0080) {
+		cout << "normal ";
+	}
+	if (flags == flags & 0x0100) {
+		cout << "temporary ";
+	}
+	if (flags == flags & 0x0200) {
+		cout << "sparse file ";
+	}
+	if (flags == flags & 0x0400) {
+		cout << "reparse point ";
+	}
+	if (flags == flags & 0x0800) {
+		cout << "compressed ";
+	}
+	if (flags == flags & 0x1000) {
+		cout << "offline ";
+	}
+	if (flags == flags & 0x2000) {
+		cout << "not content indexed ";
+	}
+	if (flags == flags & 0x4000) {
+		cout << "encrypted ";
+	}
+	if (flags == flags & 0x10000000) {
+		cout << "directory" << endl;
+	} else if ( flags == flags & 0x20000000) {
+		cout << "index view" << endl;
 	} else {
-		cout << "File" << endl;
+		cout << "file" << endl;
 	}
 }
 
