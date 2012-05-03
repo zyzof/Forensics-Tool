@@ -102,7 +102,7 @@ Case parse(Case current_case, char *input, char *output) {
         }
 
     /* server */ /* Shold be controlled localy */
-    if(!strncmp(input, "server ", 7)) {
+    else if(!strncmp(input, "server ", 7)) {
         if(!strncmp(input + 7, "on", 3)) {
             /* Turn on the server */
             server_running = 1;
@@ -121,7 +121,7 @@ Case parse(Case current_case, char *input, char *output) {
     }
 
     /* new */ 
-    if(!strncmp(input, "new ", 4)) {
+    else if(!strncmp(input, "new ", 4)) {
         if(!current_case.log) {
             current_case = new_case(input + 4, output + index, current_case);
         }
