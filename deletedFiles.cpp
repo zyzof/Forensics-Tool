@@ -64,10 +64,10 @@ void listDeletedFiles(Case current_case) {
 	
 	log << "Listed deleted files on ";
 	if (strncmp(oemBuffer, "NTFS", 4) == 0) {
-		log << " NTFS drive ";
+		log << "NTFS drive ";
 		deletedFileCount += listDeletedFilesNtfs(current_case, disk_fd);
 	} else {
-		log << " FAT32 drive ";
+		log << "FAT32 drive ";
 		deletedFileCount += listDeletedFilesFat32(current_case, disk_fd);
 	}
 	log << disk << ". ";

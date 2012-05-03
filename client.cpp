@@ -6,8 +6,10 @@
 #include <netdb.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include <dirent.h>
+#include <errno.h>
 #include "case.h"
 #include "client.h"
 #include "constants.h"
@@ -41,7 +43,7 @@ void remote_access(char *ip) {
     char in_buffer[BUFFER_SIZE] = { '\0' };
     char out_buffer[BUFFER_SIZE] = { '\0' };
     struct addrinfo *target_address_information = NULL;
-    int the_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    int the_socket = socket(AF_INET, SOCK_STREAM /* | SOCK_NONBLOCK*/, 0);
     int n = 0;
     
     pthread_mutex_init(&read_mutex, NULL);
@@ -62,18 +64,25 @@ void remote_access(char *ip) {
 
 
     /* Request connection */
-    if(connect(the_socket, target_address_information->ai_addr, target_address_information->ai_addrlen) != -1) {
+    connect(the_socket, target_address_information->ai_addr, target_address_information->ai_addrlen);
+
+    /* Set the socket to non-blocking */
+    int socket_settings = fcntl(the_socket, F_GETFL, 0);
+    fcntl(the_socket, F_SETFL, socket_settings | O_NONBLOCK);
+
+    if(read(the_socket, out_buffer, BUFFER_SIZE) == -1 && errno != EAGAIN) {
         fprintf(stderr, "Error: Could not connect.\n");
     }
     else {
         connected = 1;
+        printf("\nConnected to remote server.");
     }
 
     freeaddrinfo(target_address_information);
 
-    printf("\nConnected to remote server.");
-
-    pthread_create(&text_reading_thread, NULL, threaded_text, (void *)&the_socket);
+    if(connected) {
+        pthread_create(&text_reading_thread, NULL, threaded_text, (void *)&the_socket);
+    }
 
     while(connected) {
         /* Read input */ /* This should be made non-blocking */

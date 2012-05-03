@@ -276,7 +276,7 @@ void printFileNameAttribute(Case c, int disk, NTFS_RESIDENT_ATTRIBUTE attribute,
 		ss << fileNameAttribute.fileName[i*2];	//2 Bytes per char so desired char will be twice as far away
 	}
 	
-	streambuffer << "Deleted file: \n   Name: " << ss.str() << endl;
+	streambuffer << "Deleted file found: \n   Name: " << ss.str() << endl;
 	put_output_string(c, streambuffer.str());
 	streambuffer.str("");
 	
@@ -387,6 +387,7 @@ int listDeletedFilesNtfs(Case c, int disk_fd) {
 						ssCount << deletedFileCount;
 						
 						printFileNameAttribute(c, disk_fd, attribute, attrOffset);
+						put_output(c, "\n\n");
 					}
 					
 					attrOffset += sizeof(NTFS_RESIDENT_ATTRIBUTE) + attrDataLength;
