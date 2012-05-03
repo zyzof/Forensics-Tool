@@ -389,7 +389,6 @@ void start_sniff(Case theCase) {
                 put_output(currentCase, it->c_str());
                 put_output(currentCase, " ");
             }
-            put_output(currentCase, "\n\n");
         }
         else {
             devSelected = true;
