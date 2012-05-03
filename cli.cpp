@@ -281,6 +281,9 @@ Case parse(Case current_case, char *input, char *output) {
             else if (!strncmp(input + 8, "hide", 5)) {
                 hide_sniff();
             }
+            else {
+                index += sprintf(output + index, "Error: Invalid option. Use \"on\", \"off\", \"show\" or \"hide\".\n");
+            }
         }
         else {
             index += sprintf(output + index, "\nError: No case open.");
@@ -296,6 +299,9 @@ Case parse(Case current_case, char *input, char *output) {
             }
             else if (!strncmp(input + 4, "off", 4)) {
                 stop_psd();
+            }
+            else {
+                index += sprintf(output + index, "Error: Invalid option. Use \"on\" or \"off\".\n");
             }
         }
         else {
