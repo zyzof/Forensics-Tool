@@ -212,19 +212,34 @@ Case parse(Case current_case, char *input, char *output) {
 
 	    /* String search */
 	    else if(!strncmp(input, "search", 7)){
+		if(current_case.log) {
 		search(current_case, false);
+		}
+		else {
+		index += sprintf(output + index, "Error: No case is open.\n");
+		}
 	    }
 
 	    /* Hex search */
 	    else if(!strncmp(input, "hexfind", 8)){
+		if(current_case.log) {
 		search(current_case, true);
+		}
+		else {
+		index += sprintf(output + index, "Error: No case is open.\n");
+		}
 	    }
 
 	    /* Hex edit */
 	    else if(!strncmp(input, "hexedit", 8)){
+		if(current_case.log) {
 	        put_output(current_case, "File path");
 		string filename = get_input_string(current_case);
 		hexEdit(current_case, filename);
+		}
+		else {
+		index += sprintf(output + index, "Error: No case is open.\n");
+		}
 	    }
 
     /* note */ /* To update... */
