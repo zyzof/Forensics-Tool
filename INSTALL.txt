@@ -25,6 +25,8 @@ For libpcap-1.2.1 in ./libraries directory.
 This requires flex, bison and m4, which are also provided if needed. They can
 be installed similarly.
 
+For wxWidgets, Debian files are provided to install on the relevant systems.
+
 
 MAIN PROGRAM
 ------------
