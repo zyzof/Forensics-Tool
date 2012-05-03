@@ -25,6 +25,10 @@ void *threaded_text(void *p) {
         pthread_mutex_unlock(&read_mutex);
         buffer[n] = '\0';
         if(n) {
+            if(!strncmp(buffer, "__Exit__", 8)) { /* Server halted */
+                *(int *)p = -1;
+                break;
+            }
             printf("%s", buffer);
             fflush(stdout);
         }
@@ -88,6 +92,9 @@ void remote_access(char *ip) {
         else if(!strncmp(in_buffer, "server ", 7)) {
             printf("Error: Server must be controled locally.\n");
         }
+        else if(!strncmp(in_buffer, "navigator", 10)) {
+            printf("Sorry: File navigator only local.\n");
+        }
         else { /* Send data to the remote program */
             write(the_socket, in_buffer, strnlen(in_buffer, BUFFER_SIZE));
         }
@@ -103,6 +110,15 @@ void remote_access(char *ip) {
             n = 0;
         }
         out_buffer[n] = '\0';
+
+        if(!strncmp(out_buffer, "__Exit__", 8)) {
+            the_socket = -1;
+        }
+        if(the_socket == -1) {
+            connected = 0;
+            break;
+        }
+
         while(n > 0) {
             printf(out_buffer);
             pthread_mutex_lock(&read_mutex);
@@ -112,6 +128,8 @@ void remote_access(char *ip) {
         }
         
     }
+
+    printf("Connection closed.\n");
     
     pthread_mutex_destroy(&read_mutex);
 }

@@ -300,62 +300,62 @@ void* updateDisplay(void*) {
             put_output(currentCase, "\033[s");
             // Go to top left corner of terminal
             put_output(currentCase, "\033[1;1H");
-        }
-        if (showSniff) {
-            // Set yellow text
-            put_output(currentCase, "\033[33m");
-            put_output(currentCase, clearline.c_str());
-            put_output(currentCase, "Latest packets sniffed:\n");
-            put_output(currentCase, clearline.c_str());
-            put_output(currentCase, "-----------------------   Pkt            Source       Destination\n");
-            for (int i = 4; i >= 0; i--) {
-                printPacket(currentCase, i);
+            if (showSniff) {
+                // Set yellow text
+                put_output(currentCase, "\033[33m");
+                put_output(currentCase, clearline.c_str());
+                put_output(currentCase, "Latest packets sniffed:\n");
+                put_output(currentCase, clearline.c_str());
+                put_output(currentCase, "-----------------------   Pkt            Source       Destination\n");
+                for (int i = 4; i >= 0; i--) {
+                    printPacket(currentCase, i);
+                }
+                put_output(currentCase, clearline.c_str());
+                put_output(currentCase, "-----------------------------------------------------------------\n");
             }
-            put_output(currentCase, clearline.c_str());
-            put_output(currentCase, "-----------------------------------------------------------------\n");
-        }
-        if (scanDetected) {
-            // Set red text
-            put_output(currentCase, "\033[31m");
-            
-            // Get timestamp
-            struct tm* lt = localtime(&scanDetectedTime.tv_sec);
-            char timebuf[32], utimebuf[32];
-            strftime(timebuf, sizeof timebuf, "%Y-%m-%d %H:%M:%S", lt);
-            snprintf(utimebuf, sizeof utimebuf, "%s.%03ld", timebuf, scanDetectedTime.tv_usec / 1000L);
-            
-            // Check if packet received in last 10 seconds
-            struct timeval now;
-            gettimeofday(&now, NULL);
-            if (now.tv_sec < scanDetectedTime.tv_sec + 10) {
-                // Set bright
-                put_output(currentCase, "\033[1m");
+            if (scanDetected) {
+                // Set red text
+                put_output(currentCase, "\033[31m");
+                
+                // Get timestamp
+                struct tm* lt = localtime(&scanDetectedTime.tv_sec);
+                char timebuf[32], utimebuf[32];
+                strftime(timebuf, sizeof timebuf, "%Y-%m-%d %H:%M:%S", lt);
+                snprintf(utimebuf, sizeof utimebuf, "%s.%03ld", timebuf, scanDetectedTime.tv_usec / 1000L);
+                
+                // Check if packet received in last 10 seconds
+                struct timeval now;
+                gettimeofday(&now, NULL);
+                if (now.tv_sec < scanDetectedTime.tv_sec + 10) {
+                    // Set bright
+                    put_output(currentCase, "\033[1m");
+                }
+                put_output(currentCase, clearline.c_str());
+                put_output(currentCase, "[");
+                put_output(currentCase, utimebuf);
+                put_output(currentCase, "] Port scan detected from ");
+                put_output(currentCase, scanDetectedSource.c_str());
+                put_output(currentCase, "!\n");
             }
-            put_output(currentCase, clearline.c_str());
-            put_output(currentCase, "[");
-            put_output(currentCase, utimebuf);
-            put_output(currentCase, "] Port scan detected from ");
-            put_output(currentCase, scanDetectedSource.c_str());
-            put_output(currentCase, "!\n");
+            // Restore colour and cursor position
+            put_output(currentCase, "\033[m\033[u");
         }
-        // Restore colour and cursor position
-        put_output(currentCase, "\033[m\033[u");
     }
 }
 
 void start_psd(Case theCase) {
     currentCase = theCase;
     if (psd) {
-        put_output(currentCase, "Port scan detection is already running.\n");
+        put_output(currentCase, "\nPort scan detection is already running.");
         return;
     }
     if (!sniffing) {
-        put_output(currentCase, "Packet sniffer must be started before port scan detection can begin.\n");
+        put_output(currentCase, "\nPacket sniffer must be started before port scan detection can begin.");
     }
     else {
         log_text(currentCase, "Port scan detection started.");
         psd = true;
-        put_output(currentCase, "Port scan detection started.\n");
+        put_output(currentCase, "\nPort scan detection started.");
     }
 }
 
@@ -363,11 +363,11 @@ void stop_psd() {
     if (psd) {
         psd = false;
         scanDetected = false;
-        log_text(currentCase, "Port scan detection stopped.\n");
-        put_output(currentCase, "Port scan detection stopped.\n");
+        log_text(currentCase, "Port scan detection stopped.");
+        put_output(currentCase, "\nPort scan detection stopped.");
     }
     else {
-        put_output(currentCase, "Port scan detection is not running.\n");
+        put_output(currentCase, "\nPort scan detection is not running.");
     }
 }
 
@@ -379,7 +379,7 @@ void start_sniff(Case theCase) {
     char input[256] = { '\0' };
     set<string> devSet = getDevSet();
     while (!devSelected) {
-        put_output(currentCase, "Enter device to sniff: ");
+        put_output(currentCase, "\nEnter device to sniff: ");
         get_input(currentCase, devBuff);
         sniffDev = devBuff;
         if (devSet.count(sniffDev) == 0) {
@@ -389,7 +389,6 @@ void start_sniff(Case theCase) {
                 put_output(currentCase, it->c_str());
                 put_output(currentCase, " ");
             }
-            put_output(currentCase, "\n\n");
         }
         else {
             devSelected = true;
@@ -423,7 +422,7 @@ void start_sniff(Case theCase) {
     log_text(currentCase, c);
     
     sniffing = true;
-    put_output(currentCase, "\nPacket sniffing started.\n");
+    put_output(currentCase, "\nPacket sniffing started.");
     
     showSniff = false;
     if (tolower(answer[0]) == 'y') {
@@ -433,16 +432,20 @@ void start_sniff(Case theCase) {
 }
 
 void stop_sniff() {
+    if (!sniffing) {
+        put_output(currentCase, "\nError: Packet sniffer not running.");
+        return;
+    }
     if (psd) {
         put_output(currentCase, "This will also stop port scan detection. Continue? [y/n] ");
         char answer[2] = { '\0' };
         get_input(currentCase, answer);
-        put_output(currentCase, "\n\n");
+        put_output(currentCase, "\n");
         if (tolower(answer[0]) == 'y') {
             stop_psd();
         }
         else {
-            put_output(currentCase, "Continuing sniffing and detecting port scans.\n");
+            put_output(currentCase, "Continuing sniffing and detecting port scans.");
             return;
         }
     }
@@ -451,25 +454,48 @@ void stop_sniff() {
     log_text(currentCase, "Packet sniffing stopped.");
     showSniff = false;
     sniffing = false;
-    put_output(currentCase, "Packet sniffing stopped.\n");
+    put_output(currentCase, "\nPacket sniffing stopped.");
 }
 
 void show_sniff() {
-    showSniff = true;
-    put_output(currentCase, "Recent packets displayed.\n");
+    if (sniffing) {
+        if (showSniff) {
+            put_output(currentCase, "\nAlready showing recent packets.");
+        }
+        else {
+            showSniff = true;
+            put_output(currentCase, "\nRecent packets displayed.");
+        }
+    }
+    else {
+        put_output(currentCase, "\nError: Packet sniffer is not running.");
+    }
 }
 
 void hide_sniff() {
-    showSniff = false;
-    put_output(currentCase, "Recent packets hidden.\n");
+    if (sniffing) {
+        if (showSniff) {
+            showSniff = false;
+            put_output(currentCase, "\nRecent packets hidden.");
+        }
+        else {
+            put_output(currentCase, "\nRecent packets already hidden.");
+        }
+    }
+    else {
+        put_output(currentCase, "\nError: Packet sniffer is not running.");
+    }
 }
 
 void network_devices() {
-    put_output(currentCase, "Network devices:\n");
+    put_output(currentCase, "\nNetwork devices:");
     set<string> devSet = getDevSet();
     set<string>::iterator it;
     for (it = devSet.begin(); it != devSet.end(); it++) {
-        cout << *it << endl;
+        if (it->size() > 0) {
+            put_output(currentCase, "\n * ");
+            put_output(currentCase, it->c_str());
+        }
     }
 }
 

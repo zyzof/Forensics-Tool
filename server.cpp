@@ -32,6 +32,9 @@ void *talker(void *p) {
         
         /* Listen for requests */
         n = read(the_socket, in_buffer, BUFFER_SIZE);
+        if(!server_running) {
+            break;
+        }
         in_buffer[n] = '\0';
         if( n > 0) { /* We have recieved a command */
             current_case = parse(current_case, in_buffer, out_buffer);
@@ -45,6 +48,9 @@ void *talker(void *p) {
 
     }
 
+    sprintf(out_buffer, "__Exit__");
+    write(the_socket, out_buffer, 8);
+
     pthread_exit(EXIT_SUCCESS);
 }
 
@@ -56,8 +62,11 @@ void *listener(void *p) {
     pthread_t thread[MAX_THREADS]; /* Kinda dirty.. Will eventually expire */
     int i = 0;
 
-    int the_socket = socket(AF_INET, SOCK_STREAM /*| SOCK_NONBLOCK*/, 0);
-   
+    int the_socket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+  
+    int reuse_on = 1;
+    setsockopt(the_socket, SOL_SOCKET, SO_REUSEADDR, &reuse_on, sizeof(reuse_on));
+
     int the_new_socket = 0;
 
     struct sockaddr_in client_address;
@@ -79,12 +88,14 @@ void *listener(void *p) {
     
     while(server_running) {
         the_new_socket = accept(the_socket, (struct sockaddr *)&client_address, &client_address_length);
-        if(the_new_socket != -1) {
+        if(server_running && the_new_socket != -1) {
             pthread_create( &(thread[i++]), NULL, talker, (void *)&the_new_socket);
         }
+        sleep(1);
     }
 
-  
+    close(the_socket);
+
 
     pthread_exit(EXIT_SUCCESS);
 
