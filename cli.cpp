@@ -105,18 +105,24 @@ Case parse(Case current_case, char *input, char *output) {
     else if(!strncmp(input, "server ", 7)) {
         if(!strncmp(input + 7, "on", 3)) {
             /* Turn on the server */
-            server_running = 1;
-            pthread_create(&the_listener, NULL, listener, NULL);
+            if(!server_running) {
+                server_running = 1;
+                pthread_create(&the_listener, NULL, listener, NULL);
+                index += sprintf(output + index, "Server started. (Port 1234)\n");
+            }
+            else {
+                index += sprintf(output + index, "Error: Server is already on.\n");
+            }
         }
         else if(!strncmp(input + 7, "off", 4)) {
             /* Turn off the server */
-            index += sprintf(output + index, "Shutting down server...");
+            index += sprintf(output + index, "Shutting down server... ");
             server_running = 0;
             /* === pthread joinr should go here === */
-            printf("Done.\n");
+            index += sprintf(output + index, "Done.\n");
         }
         else {
-            fprintf(stderr, "Error: Invalid option. Use \"on\" or \"off\".\n");
+            index += sprintf(output + index, "Error: Invalid option. Use \"on\" or \"off\".\n");
         }
     }
 
@@ -152,7 +158,7 @@ Case parse(Case current_case, char *input, char *output) {
             current_case = open_case(input + 5, output + index, current_case);
         }
         else {
-            sprintf(output + index, "A case is already open. The current case must be closed before a new one can be accessed.\n");
+            index += sprintf(output + index, "A case is already open. The current case must be closed before a new one can be accessed.\n");
         }
     }
 
@@ -277,7 +283,7 @@ Case parse(Case current_case, char *input, char *output) {
             }
         }
         else {
-            printf("\nError: No case open.");
+            index += sprintf(output + index, "\nError: No case open.");
         }
     }
     else if (!strncmp(input, "netdev", 7)) {
@@ -293,7 +299,7 @@ Case parse(Case current_case, char *input, char *output) {
             }
         }
         else {
-            printf("\nError: No case open.");
+            index += sprintf(output + index, "\nError: No case open.");
         }
     }
     
@@ -304,7 +310,7 @@ Case parse(Case current_case, char *input, char *output) {
     }
     
     else {
-        printf("\nError: Unknown command entered.");
+        index += sprintf(output + index, "\nError: Unknown command entered.");
     }
 
     return current_case;
