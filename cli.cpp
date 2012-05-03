@@ -220,9 +220,8 @@ Case parse(Case current_case, char *input, char *output) {
 
 	    /* Hex edit */
 	    else if(!strncmp(input, "hexedit", 8)){
-		char filename[BUFFER_SIZE] = { '\0' }; 
-	        printf("File path:");
-		fscanf(stdin, "%s", filename);
+	        put_output(current_case, "File path");
+		string filename = get_input_string(current_case);
 		hexEdit(current_case, filename);
 	    }
 
