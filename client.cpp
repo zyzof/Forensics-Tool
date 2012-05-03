@@ -92,6 +92,9 @@ void remote_access(char *ip) {
         else if(!strncmp(in_buffer, "server ", 7)) {
             printf("Error: Server must be controled locally.\n");
         }
+        else if(!strncmp(in_buffer, "navigator", 10)) {
+            printf("Sorry: File navigator only local.\n");
+        }
         else { /* Send data to the remote program */
             write(the_socket, in_buffer, strnlen(in_buffer, BUFFER_SIZE));
         }
