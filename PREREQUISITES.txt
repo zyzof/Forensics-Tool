@@ -1,0 +1,16 @@
+The wxWidget and pcap libraries are required to compile and run the forensics
+tool.
+
+Both libraries (and their dependencies) are open source, meaning that all of
+their source code is available for scrutiny to ensure their trustworthiness.
+Anything malicious possibly added to the libraries will be able to be seen
+and detected by the open source community, and they libraries would not be as
+popular as they are.
+
+The libraries are also popular ones, with wxWidgets being used for many popular
+GUI applications, and pcap used in popular applications such as Wireshark. Both
+libraries are also available on popular distribution repositiories, such as for
+Ubuntu.
+
+For information on compiling the forensics tool with its dependencies, see
+INSTALL.txt.
