@@ -1,5 +1,8 @@
 #include <cstdio>
-#include <ifstream>
+#include <fstream>
+#include <cstdlib>
+
+using namespace std;
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -12,13 +15,18 @@ void run_file_navigator() {
     if (ifile) {
         child = fork();
     }
+    else {
+        printf("\nFile navigator not found.");
+        return;
+    }
     if (child == -1) {
-        printf("Failed to execute file navigator.\n");
+        printf("\nFailed to execute file navigator.");
     }
     else if (child == 0) {
         execl("./filenav", "./filenav", (char *) NULL);
+        exit(0);
     }
     else {
-        printf("Loading file navigator...\n");
+        printf("\nLoading file navigator...");
     }
 }
