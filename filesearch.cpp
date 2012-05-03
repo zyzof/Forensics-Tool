@@ -190,7 +190,7 @@ void displayResults(Case current_case, vector<string> results){
        put_output(current_case, s.c_str());
     }
 
-    put_output(current_case, "Usage: [open | hexedit | back]\n");
+    put_output(current_case, "Usage: [open|hexedit|back]\n");
     
     command = get_input_string(current_case);
     if (command.compare("back") == 0){return;}
