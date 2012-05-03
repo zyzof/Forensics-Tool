@@ -71,13 +71,9 @@ void main_menu_help() {
     printf("\nNetworking commands\n");
     printf("-----------------\n");
     printf("netdev - List available network devices.\n");
-    printf("sniffer start - Start the packet sniffer.\n");
-    printf("sniffer stop - Stop the packet sniffer.\n");
-    printf("sniffer show - Show recent packets sniffed.\n");
-    printf("sniffer hide - Hide recent packets sniffed.\n");
-    printf("psd start - Start port scan detecting.\n");
-    printf("psd stop - Stop port scan detecting.\n");
-
+    printf("sniffer <on / off> - Enable or disable the packet sniffer.\n");
+    printf("sniffer <show / hide> - Show or hide recent packets sniffed.\n");
+    printf("psd <on / off> - Enable or disable port scan detection (sniffer must be on).\n");
 
     printf("\nCase commands\n");
     printf("-------------\n");
@@ -232,7 +228,7 @@ Case parse(Case current_case, char *input, char *output) {
             log_text(current_case, buffer_B);
         }
         else {
-            index += sprintf(output + index, "Error: No case is open.\n");
+            index += sprintf(output + index, "\nError: No case open.");
         }
     }
 
@@ -267,10 +263,10 @@ Case parse(Case current_case, char *input, char *output) {
 /* packet sniffer */
     else if (!strncmp(input, "sniffer ", 8)) {
         if (current_case.log) {
-            if (!strncmp(input + 8, "start", 6)) {
+            if (!strncmp(input + 8, "on", 3)) {
                 start_sniff(current_case);
             }
-            else if (!strncmp(input + 8, "stop", 5)) {
+            else if (!strncmp(input + 8, "off", 4)) {
                 stop_sniff();
             }
             else if (!strncmp(input + 8, "show", 5)) {
@@ -281,7 +277,7 @@ Case parse(Case current_case, char *input, char *output) {
             }
         }
         else {
-            printf("Error: No case is currently open.\n");
+            printf("\nError: No case open.");
         }
     }
     else if (!strncmp(input, "netdev", 7)) {
@@ -289,15 +285,15 @@ Case parse(Case current_case, char *input, char *output) {
     }
     else if (!strncmp(input, "psd ", 4)) {
         if (current_case.log) {
-            if (!strncmp(input + 4, "start", 6)) {
+            if (!strncmp(input + 4, "on", 3)) {
                 start_psd(current_case);
             }
-            else if (!strncmp(input + 4, "stop", 5)) {
+            else if (!strncmp(input + 4, "off", 4)) {
                 stop_psd();
             }
         }
         else {
-            printf("Error: No case is currently open.\n");
+            printf("\nError: No case open.");
         }
     }
     
@@ -305,6 +301,10 @@ Case parse(Case current_case, char *input, char *output) {
     else if (!strncmp(input, "navigator", 10)) {
         log_text(current_case, "File navigator opened.");
         run_file_navigator();
+    }
+    
+    else {
+        printf("\nError: Unknown command entered.");
     }
 
     return current_case;
