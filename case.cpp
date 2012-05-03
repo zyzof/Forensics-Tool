@@ -142,5 +142,6 @@ int show_log(Case the_case, char *output) {
     while((c = fgetc(the_case.log)) != EOF) {
         output[index++] = c;
     }   
+    output[index] = '\0';
     return index;
 }
