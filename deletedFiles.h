@@ -38,4 +38,4 @@ long long readDWord(DWORD dword);
 
 long long readLongLong(LONGLONG longlong);
 
-void listDeletedFiles(Case current_case);
+void listDeletedFiles(Case current_case, char* arg);

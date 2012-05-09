@@ -205,7 +205,9 @@ Case parse(Case current_case, char *input, char *output) {
     }
     
     else if(!strncmp(input, "deletedfiles", 12)) {
-		listDeletedFiles(current_case);
+		char arg[BUFFER_SIZE];
+		sprintf(arg, "%s", input + 13);
+		listDeletedFiles(current_case, arg);
 	}
 
 	    /* Search functions */
