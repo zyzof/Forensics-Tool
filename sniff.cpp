@@ -104,14 +104,15 @@ string getIP6HostString(u_char* host) {
 }
 
 // Print an individual row of a packet in the display.
-void printPacket(Case* current_case, int i) {
+string printPacket(Case* current_case, int i) {
     const struct pcap_pkthdr* pkthdr = recentHdrs[i];
     u_char* packet = recentPkts[i];
+    stringstream ss;
     // Clear entire line
-    put_output(*current_case, "\033[2K");
+    ss << "\033[2K";
     if (pkthdr == NULL) {
-        put_output(*current_case, "\n");
-        return;
+        ss << "\n";
+        return ss.str();
     }
     
     // Get timestamp
@@ -125,7 +126,7 @@ void printPacket(Case* current_case, int i) {
     gettimeofday(&now, NULL);
     if (now.tv_sec < pkthdr->ts.tv_sec + 5) {
         // Set bright
-        put_output(*current_case, "\033[1m");
+        ss << "\033[1m";
     }
     
     // Default packet type: unknown
@@ -164,9 +165,10 @@ void printPacket(Case* current_case, int i) {
     // Print row
     char buffer[256] = { '\0' };
     sprintf(buffer, "%23s %4s %17s %17s\n", utimebuf, packetType.c_str(), sourceStr.c_str(), destStr.c_str());
-    put_output(*current_case, buffer);
+    ss << buffer;
     // Set normal yellow text (if bright)s
-    put_output(*current_case, "\033[m\033[33m");
+    ss << "\033[m\033[33m";
+    return ss.str();
 }
 
 // Called when port scan detector detects an a port scan.
@@ -293,29 +295,34 @@ void* sniff(void*) {
 
 void* updateDisplay(void*) {
     while (true) {
-        usleep(50000);
+        if (currentCase->local == 0) {
+            usleep(200000);
+        }
+        else {
+            usleep(50000);
+        }
         string clearline = "\033[2K";
+        stringstream ss;
         if (showSniff || scanDetected) {
             // Save cursor position
-            put_output(*currentCase, "\033[s");
+            ss << "\033[s";
             // Go to top left corner of terminal
-            put_output(*currentCase, "\033[1;1H");
+            ss << "\033[1;1H";
             if (showSniff) {
                 // Set yellow text
-                put_output(*currentCase, "\033[33m");
-                put_output(*currentCase, clearline.c_str());
-                put_output(*currentCase, "Latest packets sniffed:\n");
-                put_output(*currentCase, clearline.c_str());
-                put_output(*currentCase, "-----------------------   Pkt            Source       Destination\n");
+                ss << "\033[33m";
+                ss << clearline << "Latest packets sniffed:\n";
+                ss << clearline;
+                ss << "-----------------------   Pkt            Source       Destination\n";
                 for (int i = 4; i >= 0; i--) {
-                    printPacket(currentCase, i);
+                    ss << printPacket(currentCase, i);
                 }
-                put_output(*currentCase, clearline.c_str());
-                put_output(*currentCase, "-----------------------------------------------------------------\n");
+                ss <<  clearline;
+                ss << "-----------------------------------------------------------------\n";
             }
             if (scanDetected) {
                 // Set red text
-                put_output(*currentCase, "\033[31m");
+                ss << "\033[31m";
                 
                 // Get timestamp
                 struct tm* lt = localtime(&scanDetectedTime.tv_sec);
@@ -328,18 +335,15 @@ void* updateDisplay(void*) {
                 gettimeofday(&now, NULL);
                 if (now.tv_sec < scanDetectedTime.tv_sec + 10) {
                     // Set bright
-                    put_output(*currentCase, "\033[1m");
+                    ss << "\033[1m";
                 }
-                put_output(*currentCase, clearline.c_str());
-                put_output(*currentCase, "[");
-                put_output(*currentCase, utimebuf);
-                put_output(*currentCase, "] Port scan detected from ");
-                put_output(*currentCase, scanDetectedSource.c_str());
-                put_output(*currentCase, "!\n");
+                ss << clearline << "[" <<  utimebuf << "] Port scan detected from ";
+                ss << scanDetectedSource << "!\n";
             }
             // Restore colour and cursor position
-            put_output(*currentCase, "\033[m\033[u");
+            ss << "\033[m\033[u";
         }
+        put_output(*currentCase, ss.str().c_str());
     }
 }
 
