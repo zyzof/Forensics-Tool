@@ -308,7 +308,7 @@ void* updateDisplay(void*) {
                 put_output(*currentCase, clearline.c_str());
                 put_output(*currentCase, "-----------------------   Pkt            Source       Destination\n");
                 for (int i = 4; i >= 0; i--) {
-                    printPacket(*currentCase, i);
+                    printPacket(currentCase, i);
                 }
                 put_output(*currentCase, clearline.c_str());
                 put_output(*currentCase, "-----------------------------------------------------------------\n");

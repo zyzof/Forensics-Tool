@@ -285,7 +285,7 @@ Case parse(Case current_case, char *input, char *output) {
     else if (!strncmp(input, "sniffer ", 8)) {
         if (current_case.log) {
             if (!strncmp(input + 8, "on", 3)) {
-                start_sniff(current_case);
+                start_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "off", 4)) {
                 stop_sniff();
@@ -310,7 +310,7 @@ Case parse(Case current_case, char *input, char *output) {
     else if (!strncmp(input, "psd ", 4)) {
         if (current_case.log) {
             if (!strncmp(input + 4, "on", 3)) {
-                start_psd(current_case);
+                start_psd(&current_case);
             }
             else if (!strncmp(input + 4, "off", 4)) {
                 stop_psd();
