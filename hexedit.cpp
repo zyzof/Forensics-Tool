@@ -111,6 +111,7 @@ void replace(Case current_case, string filename){
   pos = atoi(posString.c_str());
   put_output(current_case, "value: - e.g. 7D\n");
   replacement = get_input_string(current_case);
+  
 
   //Convert it to a char for simplicity
   char h = FromHex(replacement);
@@ -119,14 +120,18 @@ void replace(Case current_case, string filename){
   //Move the put cursor to pos-1 (pos was offset by the way we displayed the 
   //file on the screen.
   infile.seekp(pos-1);
+  char c = infile.peek();
+  stringstream ss;
+  //Prepare printout
+  ss << "Replacing char at pos " << posString << ": " << hex << c << " --> " << replacement;
+
   //Put the character at that position
   infile.put(h);
   //Close the file
   infile.close();
   put_output(current_case, "Done\n");
 
-  string st = "Replacing char at pos: " + posString + " with " + replacement;
-  log_text(current_case, st.c_str());
+  log_text(current_case, ss.str().c_str());
   }
 
 int FromHex(const string &s) { 

@@ -136,7 +136,7 @@ void log_text(Case c, const char *text) { /* Text is assumed to end with a null 
 
 void log_text_without_timestamp(Case c, const char *text) {
 	if (c.log) {
-		fprintf(c.log, "%s\n", text);
+		fprintf(c.log, "%s", text);
 	}
 }
 
