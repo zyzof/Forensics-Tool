@@ -266,7 +266,7 @@ Case parse(Case current_case, char *input, char *output) {
     /* copy */ /* To update... */
     else if(!strncmp(input, "copy ", 5)) {
         if(current_case.log) {
-            sprintf(buffer_B, "%s", strrchr(input, ' '));
+            sprintf(buffer_B, "%s", strrchr(input, ' ') + 1);
             *strrchr(input, ' ') = '\0'; /* Seperate strings */            
             index += copy(current_case, input + 5, buffer_B, output + index);
             

@@ -25,8 +25,8 @@ using namespace std;
 
 // Defaults:
 // Maximum number of ports checked by a source before port scan detected.
-#define MAX_NUM_PORTS 2
-// Maximum delay time between different-port connections to detect port scan.
+#define MAX_NUM_PORTS 5
+// Maximum delay time between different-port connections to detect port scan (seconds).
 #define MAX_DELAY_TIME 5
 
 // Class representing a host that is potentially trying to do a port scan.
