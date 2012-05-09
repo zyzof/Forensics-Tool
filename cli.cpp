@@ -290,13 +290,13 @@ Case parse(Case current_case, char *input, char *output) {
                 start_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "off", 4)) {
-                stop_sniff();
+                stop_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "show", 5)) {
-                show_sniff();
+                show_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "hide", 5)) {
-                hide_sniff();
+                hide_sniff(&current_case);
             }
             else {
                 index += sprintf(output + index, "Error: Invalid option. Use \"on\", \"off\", \"show\" or \"hide\".\n");
@@ -315,7 +315,7 @@ Case parse(Case current_case, char *input, char *output) {
                 start_psd(&current_case);
             }
             else if (!strncmp(input + 4, "off", 4)) {
-                stop_psd();
+                stop_psd(&current_case);
             }
             else {
                 index += sprintf(output + index, "Error: Invalid option. Use \"on\" or \"off\".\n");

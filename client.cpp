@@ -35,6 +35,8 @@ void *threaded_text(void *p) {
             fflush(stdout);
         }
         buffer[0] = '\0';
+        
+        usleep(10000);
     }
 }
 
