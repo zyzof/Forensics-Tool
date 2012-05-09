@@ -30,5 +30,7 @@ Case close_case(Case c, char *output);
 /* Log a text string to the case */
 void log_text(Case c, const char *text);
 
+void log_text_without_timestamp(Case c, const char *text);
+
 /* Display the case log */
 int show_log(Case c, char *output);

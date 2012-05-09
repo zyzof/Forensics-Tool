@@ -141,6 +141,15 @@ void put_output(Case current_case, const char *output) {
     }
 }
 
+void put_output_and_log(Case current_case, const char *output, bool timestamp) {
+	put_output(current_case, output);
+	if (timestamp) {
+		log_text(current_case, output);
+	} else {
+		log_text_without_timestamp(current_case, output);
+	}
+}
+
 /*
  * Wrapper for put_output for C++ strings
  */

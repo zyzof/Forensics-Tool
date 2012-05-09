@@ -52,7 +52,7 @@ void listDeletedFiles(Case current_case) {
 	}
 	
 	buffer << "Searching for deleted files on " << disk << "..." << endl << endl;
-	put_output_string(current_case, buffer.str());
+	put_output_and_log(current_case, buffer.str().c_str(), true);
 	
 	LONGLONG oemId;
 	pread(disk_fd, &oemId, sizeof(LONGLONG), 0x03);

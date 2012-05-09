@@ -3,3 +3,4 @@ cases/*
 *~
 .nfs*
 tool
+Targets/*

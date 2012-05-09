@@ -134,6 +134,12 @@ void log_text(Case c, const char *text) { /* Text is assumed to end with a null 
 	}
 }
 
+void log_text_without_timestamp(Case c, const char *text) {
+	if (c.log) {
+		fprintf(c.log, "%s\n", text);
+	}
+}
+
 /* Show the current log file */
 int show_log(Case the_case, char *output) {
     char c = '\0';

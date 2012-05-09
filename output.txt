@@ -1,0 +1,139 @@
+[;H[J[1;32m+-----------------------+
+|    Case Management    |
++-----------------------+
+
+
+[0m
+Management commands
+-------------------
+help - Print this message.
+new <name> - Create a new case.
+list - List available cases.
+open <case> - Open a case to work on.
+close - Close the current case
+exit - Leave the progam.
+connect <ip_address> - Connect to a remote server.
+server <on / off> - Enable or disable remote access.
+
+Forensic commands
+-----------------
+geometry <path> - Show the disk geometry for the device at <path>.
+partitions <path / filename> - Show the partition table for <path / filename>.
+deletedfiles - List the deleted files on a FAT32 or NTFS disk
+
+File commands
+-----------------
+navigator - Open the file navigator.
+search - Search for files by directory and keyword.
+hexfind - Search for files by directory and hex string.
+hexedit - Edit a file with the hex editor.
+
+Networking commands
+-----------------
+netdev - List available network devices.
+sniffer <on / off> - Enable or disable the packet sniffer.
+sniffer <show / hide> - Show or hide recent packets sniffed.
+psd <on / off> - Enable or disable port scan detection (sniffer must be on).
+
+Case commands
+-------------
+files - List files available for a case.
+note - Add a note to a case log.
+log - Show the work log for the current case.
+copy <file> <name> - Copy <file> from the filesysem to the case directory as <name>
+
+local > Enter the name of the drive you want to search for deleted files on: Searching for deleted files on /dev/sda1...
+
+ Finding $MFT...
+  Number of bytes per sector: 512
+  Number of sectors per cluster: 8
+  $MFT cluster number: 8533
+  Bytes per cluster: 4096
+ ...$MFT found at byte offset: 34951168
+
+Listing deleted files...
+Deleted file found: 
+   Name: bootmgr
+   Type: archive file
+
+
+Reached end of $MFT
+
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
+
+
+local > Enter the name of the drive you want to search for deleted files on: Could not open  for reading.
