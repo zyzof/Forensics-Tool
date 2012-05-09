@@ -305,7 +305,7 @@ Case parse(Case current_case, char *input, char *output) {
         }
     }
     else if (!strncmp(input, "netdev", 7)) {
-        network_devices();
+        network_devices(&current_case);
     }
     else if (!strncmp(input, "psd ", 4)) {
         if (current_case.log) {

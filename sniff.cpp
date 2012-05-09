@@ -487,7 +487,8 @@ void hide_sniff() {
     }
 }
 
-void network_devices() {
+void network_devices(Case* theCase) {
+    currentCase = theCase;
     put_output(*currentCase, "\nNetwork devices:");
     set<string> devSet = getDevSet();
     set<string>::iterator it;
