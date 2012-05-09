@@ -43,6 +43,10 @@ void *talker(void *p) {
 
             /* Write the command output to the socket */
             write(the_socket, out_buffer, strnlen(out_buffer, BUFFER_SIZE));
+            /* Give a new prompt */
+            sprintf(out_buffer, "\nremote > ");
+            write(the_socket, out_buffer, strnlen(out_buffer, BUFFER_SIZE));
+
             out_buffer[0] = '\0'; /* We are now done with that string */
         }
 
