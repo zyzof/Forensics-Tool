@@ -199,15 +199,39 @@ void displayResults(Case current_case, vector<string> results){
     {
       int selection = getSelection(current_case, results.size());
       path = getPath(results, selection);
-      /*This creates a string instruction that will be run by the system.
-      the command xdg-open opens the file in the default program. 
-      The clumsy concatenation is to add apostrophes around the path,
-      which prevents it from rejecting the path due to spaces and other
-      characters.*/
-      openthis = "xdg-open " + path;
-      system(openthis.c_str()); 
-      string out = "Opening: " + path;
-      log_text(current_case, out.c_str());
+
+      if (current_case.local)
+      {
+        /*This creates a string instruction that will be run by the system.
+        the command xdg-open opens the file in the default program. 
+        The clumsy concatenation is to add apostrophes around the path,
+        which prevents it from rejecting the path due to spaces and other
+        characters.*/
+        openthis = "xdg-open " + path;
+        system(openthis.c_str()); 
+        string out = "Opening: " + path;
+        log_text(current_case, out.c_str());
+      }
+      else
+      {
+        put_output(current_case, "Opening a file remotely will cause it to stream to the console. \n Are you sure you wish to do this? y/N");
+        char answer[2]  = {'\0'};
+	get_input(current_case, answer);
+	if (tolower(answer[0]) == 'y')
+	{
+          string line;
+          fstream infile;
+	  path = path.substr(1, path.length()-2);
+          infile.open(path.c_str(), ios_base::in | ios_base::out | ios_base::binary );
+          cout << path << endl;
+          while (getline(infile,line))
+          {
+             put_output(current_case, line.c_str());
+          }
+          infile.close();
+	put_output(current_case, "\n");
+	}
+      }
     }
 
     else if (command.compare("hexedit") == 0)
