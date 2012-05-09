@@ -84,9 +84,9 @@ void remote_access(char *ip) {
         pthread_create(&text_reading_thread, NULL, threaded_text, (void *)&the_socket);
     }
 
+    printf("\nremote > ");
     while(connected) {
         /* Read input */ /* This should be made non-blocking */
-        printf("\nremote > ");
         gets(in_buffer);
         if(!strncmp(in_buffer, "exit", 5)) {
             /* Close the connection */
@@ -109,32 +109,34 @@ void remote_access(char *ip) {
         }
 
         /* A temporary hack... Give it time to reply. */
-        usleep(100000);
+        //usleep(100000);
 
-        /* display output */
-        pthread_mutex_lock(&read_mutex);
-        n = read(the_socket, out_buffer, BUFFER_SIZE);
-        pthread_mutex_unlock(&read_mutex);
-        if (n < 0) {
-            n = 0;
-        }
-        out_buffer[n] = '\0';
+        /* display output */ /* <----- Moved to another thread */
+        //pthread_mutex_lock(&read_mutex);
+        //n = read(the_socket, out_buffer, BUFFER_SIZE);
+        //pthread_mutex_unlock(&read_mutex);
+        //if (n < 0) {
+        //    n = 0;
+        //}
+        //out_buffer[n] = '\0';
 
-        if(!strncmp(out_buffer, "__Exit__", 8)) {
-            the_socket = -1;
-        }
+        //if(!strncmp(out_buffer, "__Exit__", 8)) {
+        //    the_socket = -1;
+        //} /* <-------- Moved to another thread */
+        
+        /* See if we have been told to stop */
         if(the_socket == -1) {
             connected = 0;
             break;
         }
 
-        while(n > 0) {
+        /*while(n > 0) { <===== Moved to another therad .
             printf(out_buffer);
             pthread_mutex_lock(&read_mutex);
             n = read(the_socket, out_buffer, BUFFER_SIZE);
             pthread_mutex_unlock(&read_mutex);
             out_buffer[n] = '\0';
-        }
+        }*/
         
     }
 
