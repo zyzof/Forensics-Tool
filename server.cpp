@@ -136,7 +136,7 @@ void put_output(Case current_case, const char *output) {
     
     if(current_case.local) {
         /* We want to write a line to the local terminal */
-        printf(output);
+        printf("%s", output);
         fflush(stdout);
     }
     else {
