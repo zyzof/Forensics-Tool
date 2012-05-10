@@ -130,6 +130,9 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     
     // Default packet type: unknown
     string packetType = "?";
+    unsigned short srcPort = 0;
+    unsigned short destPort = 0;
+    bool knownPorts = false;
     
     struct ether_header* ehdr = (struct ether_header*) packet;
     string sourceStr = getHostString(ehdr->ether_shost);
@@ -139,8 +142,14 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
         const struct ip* ipStruct = (struct ip*) (packet + sizeof(struct ether_header));
         if (ipStruct->ip_v == 4) {
             packetType = "IPv4";
-            sourceStr = inet_ntoa(ipStruct->ip_src);
-            destStr = inet_ntoa(ipStruct->ip_dst);
+            if (ipStruct->ip_p == 6) {
+                sourceStr = inet_ntoa(ipStruct->ip_src);
+                destStr = inet_ntoa(ipStruct->ip_dst);
+                const struct tcphdr* tcpStruct = (struct tcphdr*) (ipStruct + sizeof(struct ip));
+                srcPort = ntohs(tcpStruct->source);
+                destPort = ntohs(tcpStruct->dest);
+                knownPorts = true;
+            }
         }
 
     }
@@ -163,9 +172,26 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     }
     // Print row
     char buffer[256] = { '\0' };
-    sprintf(buffer, "%23s %4s %17s %17s\n", utimebuf, packetType.c_str(), sourceStr.c_str(), destStr.c_str());
+    sprintf(buffer, "%23s %4s %17s", utimebuf, packetType.c_str(), sourceStr.c_str());
     ss << buffer;
-    // Set normal yellow text (if bright)s
+    if (knownPorts) {
+        sprintf(buffer, "%-5u", srcPort);
+        ss << ":" << buffer;
+    }
+    else {
+        ss << "      ";
+    }
+    sprintf(buffer, " %17s", destStr.c_str());
+    ss << buffer;
+    if (knownPorts) {
+        sprintf(buffer, "%-5u", destPort);
+        ss << ":" << buffer;
+    }
+    else {
+        ss << "      ";
+    }
+    ss << "\n";
+    // Set normal yellow text (if bright)
     if (printCtrlChars) {
         ss << "\033[m\033[33m";
     }
