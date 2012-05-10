@@ -34,6 +34,25 @@ int list_cases(char *output) {
     return index;
 }
 
+/* Clear any left over lock files */
+void clear_locks() {
+    int index = 0;
+    char buffer[BUFFER_SIZE] = { '\0' };
+    struct dirent *this_case;
+    DIR *cases = opendir("./cases/");
+    
+    while(this_case = readdir(cases)) { /* Cases are represented by directories */
+        if(this_case->d_type == DT_DIR
+          && strncmp(this_case->d_name, ".", 2)
+          && strncmp(this_case->d_name, "..", 3)) {
+            sprintf(buffer, "./cases/%s/lock", this_case->d_name);
+            remove(buffer);
+        }
+    }
+    closedir(cases);
+}
+
+
 /* List files available for a case */
 int list_files(Case the_case, char* output) {
     struct dirent *this_file;
