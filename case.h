@@ -13,6 +13,9 @@ typedef struct Case_struct {
 /* List all cases in the system */
 int list_cases(char *output);
 
+/* Clear old lock files */
+void clear_locks();
+
 /* List all files related to a case */
 int list_files(Case the_case, char *output);
 

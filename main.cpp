@@ -89,7 +89,7 @@ int case_manager() {
 }
 
 int main(int argc, char **argv) {
-
+    clear_locks();
     case_manager();
 
 }
