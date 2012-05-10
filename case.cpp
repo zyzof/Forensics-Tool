@@ -113,6 +113,8 @@ Case open_case(char *name, char *output, Case the_case) {
         fprintf(stderr, "Error: Log file not accessable.\n");
         return the_case;
     }
+    
+    the_case.snifferState = NULL;
 
     log_text(the_case, "Case opened.");
     sprintf(output, "Case \"%s\" opened. \n", name); /* Last accessed info? */

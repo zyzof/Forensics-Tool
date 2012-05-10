@@ -7,6 +7,7 @@ typedef struct Case_struct {
     char case_name[81]; /* Assuming a friendly user... */
     int local; /* Are we local (treaded as boolean) */
     int socket; /* File descriptor to the socket, if we are remote */
+    void* snifferState;
 } Case;
 
 /* List all cases in the system */
