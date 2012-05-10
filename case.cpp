@@ -84,6 +84,18 @@ Case new_case(char *input, char *output, Case the_case) {
 /* Open a case. Returns the case structure */
 Case open_case(char *name, char *output, Case the_case) {
     char buffer[BUFFER_SIZE] = { '\0' };
+    FILE *lock = NULL;
+    /* See if the case is free */
+    sprintf(buffer, "./cases/%s/lock", name);
+    lock = fopen(buffer, "r");
+    if(lock) {
+        fclose(lock);
+        sprintf(output, "Error: The case %s is currently in use by another user.\n", name);
+        return the_case;
+    }
+    lock = fopen(buffer, "w");
+    fprintf(lock, "This case is open.\n");
+    fclose(lock);
 
     sprintf(buffer, "./cases/%s", name);
     sprintf(the_case.case_name, name);
@@ -101,6 +113,8 @@ Case open_case(char *name, char *output, Case the_case) {
         fprintf(stderr, "Error: Log file not accessable.\n");
         return the_case;
     }
+    
+    the_case.snifferState = NULL;
 
     log_text(the_case, "Case opened.");
     sprintf(output, "Case \"%s\" opened. \n", name); /* Last accessed info? */
@@ -109,6 +123,10 @@ Case open_case(char *name, char *output, Case the_case) {
 
 /* Close a case. Returns an empty case structure */
 Case close_case(Case c, char *output) {
+    char buffer[BUFFER_SIZE] = { '\0' };
+    sprintf(buffer, "./cases/%s/lock", c.case_name);
+    remove(buffer);
+
     log_text(c, "Closing case.\n");
     closedir(c.case_directory);
     c.case_directory = NULL;
@@ -131,6 +149,12 @@ void log_text(Case c, const char *text) { /* Text is assumed to end with a null 
 														local_time->tm_min, 
 														local_time->tm_sec);
 		fprintf(c.log, "%s\n", text);
+	}
+}
+
+void log_text_without_timestamp(Case c, const char *text) {
+	if (c.log) {
+		fprintf(c.log, "%s", text);
 	}
 }
 

@@ -205,7 +205,9 @@ Case parse(Case current_case, char *input, char *output) {
     }
     
     else if(!strncmp(input, "deletedfiles", 12)) {
-		listDeletedFiles(current_case);
+		char arg[BUFFER_SIZE];
+		sprintf(arg, "%s", input + 13);
+		listDeletedFiles(current_case, arg);
 	}
 
 	    /* Search functions */
@@ -266,7 +268,7 @@ Case parse(Case current_case, char *input, char *output) {
     /* copy */ /* To update... */
     else if(!strncmp(input, "copy ", 5)) {
         if(current_case.log) {
-            sprintf(buffer_B, "%s", strrchr(input, ' '));
+            sprintf(buffer_B, "%s", strrchr(input, ' ') + 1);
             *strrchr(input, ' ') = '\0'; /* Seperate strings */            
             index += copy(current_case, input + 5, buffer_B, output + index);
             
@@ -285,16 +287,16 @@ Case parse(Case current_case, char *input, char *output) {
     else if (!strncmp(input, "sniffer ", 8)) {
         if (current_case.log) {
             if (!strncmp(input + 8, "on", 3)) {
-                start_sniff(current_case);
+                start_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "off", 4)) {
-                stop_sniff();
+                stop_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "show", 5)) {
-                show_sniff();
+                show_sniff(&current_case);
             }
             else if (!strncmp(input + 8, "hide", 5)) {
-                hide_sniff();
+                hide_sniff(&current_case);
             }
             else {
                 index += sprintf(output + index, "Error: Invalid option. Use \"on\", \"off\", \"show\" or \"hide\".\n");
@@ -305,15 +307,15 @@ Case parse(Case current_case, char *input, char *output) {
         }
     }
     else if (!strncmp(input, "netdev", 7)) {
-        network_devices();
+        network_devices(&current_case);
     }
     else if (!strncmp(input, "psd ", 4)) {
         if (current_case.log) {
             if (!strncmp(input + 4, "on", 3)) {
-                start_psd(current_case);
+                start_psd(&current_case);
             }
             else if (!strncmp(input + 4, "off", 4)) {
-                stop_psd();
+                stop_psd(&current_case);
             }
             else {
                 index += sprintf(output + index, "Error: Invalid option. Use \"on\" or \"off\".\n");

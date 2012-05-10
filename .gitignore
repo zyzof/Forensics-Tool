@@ -2,3 +2,5 @@ cases/*
 *.out
 *~
 .nfs*
+tool
+Targets/*

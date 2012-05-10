@@ -1,0 +1,1 @@
+g++ filenavigator/filenavigator.cpp `wx-config --libs` `wx-config --cxxflags` -o filenav

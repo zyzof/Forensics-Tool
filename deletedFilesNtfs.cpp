@@ -226,7 +226,7 @@ void printType(Case c, FILENAME_ATTRIBUTE attr) {
 		streambuffer << "file" << endl;
 	}
 	
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 void printCreationTime(Case c, FILENAME_ATTRIBUTE attr) {
@@ -235,7 +235,7 @@ void printCreationTime(Case c, FILENAME_ATTRIBUTE attr) {
 	unsigned long long creationTimeRaw = readLongLong(attr.n64CreationTime);
 	
 	streambuffer << "   Creation time: " << creationTimeRaw << endl;
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 	
 }
 
@@ -245,7 +245,7 @@ void printLastModifiedTime(Case c, FILENAME_ATTRIBUTE attr) {
 	unsigned long long modifiedTimeRaw = readLongLong(attr.n64AlteredTime);
 	
 	streambuffer << "   Last modified: " << modifiedTimeRaw << endl;
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 void printLastAccessedTime(Case c, FILENAME_ATTRIBUTE attr) {
@@ -254,7 +254,7 @@ void printLastAccessedTime(Case c, FILENAME_ATTRIBUTE attr) {
 	unsigned long long lastAccessedTimeRaw = readLongLong(attr.n64ReadTime);
 	
 	streambuffer << "   Last accessed: " << lastAccessedTimeRaw << endl;
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 void printFileNameAttribute(Case c, int disk, NTFS_RESIDENT_ATTRIBUTE attribute, unsigned long long attributeHeaderOffset) {
@@ -276,8 +276,8 @@ void printFileNameAttribute(Case c, int disk, NTFS_RESIDENT_ATTRIBUTE attribute,
 		ss << fileNameAttribute.fileName[i*2];	//2 Bytes per char so desired char will be twice as far away
 	}
 	
-	streambuffer << "Deleted file: \n   Name: " << ss.str() << endl;
-	put_output_string(c, streambuffer.str());
+	streambuffer << "Deleted file found: \n   Name: " << ss.str() << endl;
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 	streambuffer.str("");
 	
 	printType(c, fileNameAttribute);
@@ -365,7 +365,7 @@ int listDeletedFilesNtfs(Case c, int disk_fd) {
 	NTFS_RESIDENT_ATTRIBUTE attribute;
 	
 	streambuffer << "Listing deleted files..." << endl;
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 	streambuffer.str("");
 	header = getFileEntryHeader(disk_fd, mftOffset);
 	while (isMftRecord(header)) {
@@ -387,6 +387,7 @@ int listDeletedFilesNtfs(Case c, int disk_fd) {
 						ssCount << deletedFileCount;
 						
 						printFileNameAttribute(c, disk_fd, attribute, attrOffset);
+						put_output_and_log(c, "\n\n", false);
 					}
 					
 					attrOffset += sizeof(NTFS_RESIDENT_ATTRIBUTE) + attrDataLength;

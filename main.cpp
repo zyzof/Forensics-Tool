@@ -33,7 +33,7 @@ int case_manager() {
     int running = 1;
     int case_open = 0;
     int disk_fd = 0;
-    Case current_case = { NULL, NULL, { '\0' }, 1, 0 };
+    Case current_case = { NULL, NULL, { '\0' }, 1, 0, NULL };
     char input_buffer[BUFFER_SIZE] = { '\0' }; 
     char buffer_B[BUFFER_SIZE] = { '\0' };
     char output_buffer[BUFFER_SIZE] = { '\0' };

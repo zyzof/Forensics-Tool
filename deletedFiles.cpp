@@ -32,7 +32,7 @@ long long readLongLong(LONGLONG longlong) {
 }
 
 
-void listDeletedFiles(Case current_case) {
+void listDeletedFiles(Case current_case, char* arg) {
 	string disk;
 	int disk_fd;
 	int deletedFileCount = 0;
@@ -52,7 +52,7 @@ void listDeletedFiles(Case current_case) {
 	}
 	
 	buffer << "Searching for deleted files on " << disk << "..." << endl << endl;
-	put_output_string(current_case, buffer.str());
+	put_output_and_log(current_case, buffer.str().c_str(), true);
 	
 	LONGLONG oemId;
 	pread(disk_fd, &oemId, sizeof(LONGLONG), 0x03);
@@ -62,12 +62,19 @@ void listDeletedFiles(Case current_case) {
 		oemBuffer[i] = (char)oemId.data[i];
 	}
 	
+	
 	log << "Listed deleted files on ";
-	if (strncmp(oemBuffer, "NTFS", 4) == 0) {
-		log << " NTFS drive ";
+	if (strncmp(arg, "NTFS", 4) == 0) {	//check args first. File system may have been overridden
+		log << "NTFS drive ";
+		deletedFileCount += listDeletedFilesNtfs(current_case, disk_fd);
+	} else if (strncmp(arg, "FAT32", 5) == 0) {
+		log << "FAT32 drive ";
+		deletedFileCount += listDeletedFilesFat32(current_case, disk_fd);
+	} else if (strncmp(oemBuffer, "NTFS", 4) == 0) {	
+		log << "NTFS drive ";
 		deletedFileCount += listDeletedFilesNtfs(current_case, disk_fd);
 	} else {
-		log << " FAT32 drive ";
+		log << "FAT32 drive ";
 		deletedFileCount += listDeletedFilesFat32(current_case, disk_fd);
 	}
 	log << disk << ". ";

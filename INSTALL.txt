@@ -1,0 +1,40 @@
+DEPENDENCIES
+------------
+
+To install on Ubuntu:
+
+Pcap packet capture library: 
+
+sudo apt-get install libpcap-dev
+
+wxWidgets graphical library:
+
+sudo apt-get install libwxgtk2.8-dev libwxgtk2.8-dbg
+
+
+To install on other platform:
+
+Try:
+
+./configure
+make
+sudo make install
+
+For libpcap-1.2.1 in ./libraries directory.
+
+This requires flex, bison and m4, which are also provided if needed. They can
+be installed similarly.
+
+For wxWidgets, Debian files are provided to install on the relevant systems.
+
+
+MAIN PROGRAM
+------------
+
+To compile file navigator (requires WxWidgets), in main directory:
+
+.\compile-filenav.sh
+
+To compile the main program:
+
+.\compile.sh

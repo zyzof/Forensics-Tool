@@ -144,7 +144,7 @@ void printLongFileNameEntry(Case c, LONG_FILENAME_ENTRY entry) {
 		streambuffer << entry.char13.data[0];
 	}
 	
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 void printShortFileName(Case c, DIRECTORY_ENTRY entry) {
@@ -159,7 +159,7 @@ void printShortFileName(Case c, DIRECTORY_ENTRY entry) {
 		streambuffer << entry.fileExtension[i];
 	}
 	
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 bool isPartOfLongFileName(DIRECTORY_ENTRY entry) {
@@ -173,11 +173,11 @@ bool isPartOfLongFileName(DIRECTORY_ENTRY entry) {
 void printType(Case c, DIRECTORY_ENTRY entry) {
 	stringstream streambuffer;
 	
-	put_output(c, "   Type: ");
+	put_output_and_log(c, "   Type: ", false);
 	if (entry.fileAttributes.data == 0x10) {
-		put_output(c, "directory\n");
+		put_output_and_log(c, "directory\n", false);
 	} else {
-		put_output(c, "file\n");
+		put_output_and_log(c, "file\n", false);
 	}
 }
 
@@ -190,7 +190,7 @@ void printDate(Case c, WORD date) {
 	int year = 1980 + ((data & 65042) >> 9);
 	streambuffer << day << "/" << month << "/" << year;
 	
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 void printTime(Case c, WORD time) {
@@ -217,32 +217,32 @@ void printTime(Case c, WORD time) {
 	}
 	streambuffer << secs;
 	
-	put_output_string(c, streambuffer.str());
+	put_output_and_log(c, streambuffer.str().c_str(), false);
 }
 
 void printCreationTime(Case c, DIRECTORY_ENTRY entry) {
 	stringstream streambuffer;
 	
-	put_output(c, "   Created: ");
+	put_output_and_log(c, "   Created: ", false);
 	
 	printDate(c, entry.creationDate);
-	put_output(c, " ");
+	put_output_and_log(c, " ", false);
 	printTime(c, entry.creationTimeHoursMinutesSeconds);
-	put_output(c, "\n");
+	put_output_and_log(c, "\n", false);
 }
 
 void printLastAccessedTime(Case c, DIRECTORY_ENTRY entry) {
-	put_output(c, "   Last accessed: ");
+	put_output_and_log(c, "   Last accessed: ", false);
 	printDate(c, entry.accessDate);
-	put_output(c, "\n");
+	put_output_and_log(c, "\n", false);
 }
 
 void printLastModifiedtime(Case c, DIRECTORY_ENTRY entry) {
-	put_output(c, "   Last modified: ");
+	put_output_and_log(c, "   Last modified: ", false);
 	printDate(c, entry.modifiedDate);
-	put_output(c, " ");
+	put_output_and_log(c, " ", false);
 	printTime(c, entry.modifiedTime);
-	put_output(c, "\n");
+	put_output_and_log(c, "\n", false);
 }
 
 void printRemainingFileAttributes(Case c, DIRECTORY_ENTRY entry) {
@@ -268,8 +268,8 @@ int listDeletedFilesFat32(Case c, int disk_fd) {
 		
 		if (isDeletedEntry(entry)) {
 			deletedFileCount++;
-			put_output(c, "Deleted file found:\n");
-			put_output(c, "   File name: ");
+			put_output_and_log(c, "Deleted file found:\n", false);
+			put_output_and_log(c, "   File name: ", false);
 			
 			while (isPartOfLongFileName(entry)) {
 				fileNameRecords++;
@@ -290,11 +290,11 @@ int listDeletedFilesFat32(Case c, int disk_fd) {
 			} else {
 				printShortFileName(c, entry);
 			}
-			put_output(c, "\n");
+			put_output_and_log(c, "\n", false);
 			
 			printRemainingFileAttributes(c, entry);
 			
-			put_output(c, "\n\n");
+			put_output_and_log(c, "\n\n", false);
 		}
 		rootDirLocation += 32;
 		n = pread(disk_fd, &entry, sizeof(DIRECTORY_ENTRY), rootDirLocation);

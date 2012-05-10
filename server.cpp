@@ -26,7 +26,7 @@ void *talker(void *p) {
     char in_buffer[BUFFER_SIZE] = { '\0' };
     char out_buffer[BUFFER_SIZE] = { '\0' };
     int n = 0;
-    Case current_case = { NULL, NULL, { '\0' }, 0, the_socket };
+    Case current_case = { NULL, NULL, { '\0' }, 0, the_socket, NULL };
 
     while(server_running && connected) {
         
@@ -43,6 +43,10 @@ void *talker(void *p) {
 
             /* Write the command output to the socket */
             write(the_socket, out_buffer, strnlen(out_buffer, BUFFER_SIZE));
+            /* Give a new prompt */
+            sprintf(out_buffer, "\nremote > ");
+            write(the_socket, out_buffer, strnlen(out_buffer, BUFFER_SIZE));
+
             out_buffer[0] = '\0'; /* We are now done with that string */
         }
 
@@ -132,13 +136,22 @@ void put_output(Case current_case, const char *output) {
     
     if(current_case.local) {
         /* We want to write a line to the local terminal */
-        printf(output);
+        printf("%s", output);
         fflush(stdout);
     }
     else {
         /*We want to write a line to the remote client */
         write(current_case.socket, output, strnlen(output, BUFFER_SIZE));
     }
+}
+
+void put_output_and_log(Case current_case, const char *output, bool timestamp) {
+	put_output(current_case, output);
+	if (timestamp) {
+		log_text(current_case, output);
+	} else {
+		log_text_without_timestamp(current_case, output);
+	}
 }
 
 /*
