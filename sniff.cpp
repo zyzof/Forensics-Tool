@@ -26,7 +26,7 @@ using namespace std;
 
 // Defaults:
 // Maximum number of ports checked by a source before port scan detected.
-#define MAX_NUM_PORTS 5
+#define MAX_NUM_PORTS 20
 // Maximum delay time between different-port connections to detect port scan (seconds).
 #define MAX_DELAY_TIME 5
 
@@ -200,8 +200,8 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     sprintf(buffer, "%23s %-8s %17s", utimebuf, packetType.c_str(), sourceStr.c_str());
     ss << buffer;
     if (knownPorts) {
-        sprintf(buffer, "%-5u", srcPort);
-        ss << ":" << buffer;
+        sprintf(buffer, "%6u", srcPort);
+        ss << buffer;
     }
     else {
         ss << "      ";
@@ -209,8 +209,8 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     sprintf(buffer, " %17s", destStr.c_str());
     ss << buffer;
     if (knownPorts) {
-        sprintf(buffer, "%-5u", destPort);
-        ss << ":" << buffer;
+        sprintf(buffer, "%6u", destPort);
+        ss <<  buffer;
     }
     else {
         ss << "      ";
@@ -344,11 +344,11 @@ void* sniff(void* voidState) {
     pcap_set_promisc(p, 1);
     pcap_set_timeout(p, -1);
     int status = pcap_activate(p);
-    state->textPacketOutput = new ofstream(state->textOutputFilename->c_str(), ios::out);
+    state->textPacketOutput = new ofstream(state->textOutputFilename->c_str(), ios::out | ios::app);
     if (state->textPacketOutput->fail()) {
         put_output(*state->currentCase, ("Unable to open output stream \"" + *state->textOutputFilename + "\".\n").c_str());
     }
-    state->rawPacketOutput = new ofstream(state->rawOutputFilename->c_str(), ios::out | ios::binary);
+    state->rawPacketOutput = new ofstream(state->rawOutputFilename->c_str(), ios::out | ios::app | ios::binary);
     if (state->rawPacketOutput->fail()) {
         put_output(*state->currentCase, ("Unable to open output stream \"" + *state->rawOutputFilename + "\".\n").c_str());
     }
@@ -378,12 +378,12 @@ void* updateDisplay(void* voidState) {
                 ss << "\033[33m";
                 ss << clearline << "Latest packets sniffed:\n";
                 ss << clearline;
-                ss << "----------------------- Packet              Source [Port]     Destination [Port]\n";
+                ss << "----------------------- Packet   Source            Port  Destination       Port \n";
                 for (int i = 4; i >= 0; i--) {
                     ss << printPacket(state, i, true);
                 }
                 ss <<  clearline;
-                ss << "-----------------------------------------------------------------\n";
+                ss << "--------------------------------------------------------------------------------\n";
             }
             if (state->scanDetected) {
                 // Set red text
@@ -513,9 +513,9 @@ void start_sniff(Case* currentCase) {
     
     state->showSniff = false;
     if (tolower(answer[0]) == 'y') {
-        rc = pthread_create(&state->sniffThreads[1], NULL, updateDisplay, (void*) state);
         state->showSniff = true;
     }
+    rc = pthread_create(&state->sniffThreads[1], NULL, updateDisplay, (void*) state);
 }
 
 void stop_sniff(Case* currentCase) {
