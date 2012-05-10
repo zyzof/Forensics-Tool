@@ -164,7 +164,11 @@ Case parse(Case current_case, char *input, char *output) {
 
     /* close */
     else if(!strncmp(input, "close", 6)) {
-        current_case = close_case(current_case, output + index);
+		if (current_case.log) {
+			current_case = close_case(current_case, output + index);
+		} else {
+			index += sprintf(output + index, "No case open!\n");
+		}
     }
             
     /* geometry */
