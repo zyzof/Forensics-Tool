@@ -33,12 +33,19 @@ using namespace std;
 #define TEXT_PACKETS_FILE "log_packets.txt"
 #define  RAW_PACKETS_FILE "raw_packets.dat"
 
+struct udphdr {
+    u_short source;
+    u_short dest;
+    u_short len;
+    u_short checksum;
+};
+
 // Class representing a host that is potentially trying to do a port scan.
 Host::Host(struct in_addr src, struct in_addr dst) {
     this->sAddr = src;
     this->dAddr = dst;
 }
-    
+
 // When a new packet is received from this host
 bool Host::newPacket(timeval ts, u_short port) {
     double newTimestamp = (double) ts.tv_sec + ts.tv_usec * 0.000001;
@@ -55,23 +62,6 @@ void Host::clear() {
     ports.clear();
     timestamp = 0.0;
 }
-
-/*bool showSniff = false;
-bool sniffing = false;
-bool psd = false;
-map<u_long, map<u_long, Host> > hosts;
-string scanDetectedSource = "";
-bool scanDetected = false;
-timeval scanDetectedTime;
-
-Case* currentCase;
-
-ofstream* packetOutput;
-struct pcap_pkthdr* recentHdrs[5];
-u_char* recentPkts[5];
-pthread_t sniffThreads[2];
-string sniffDev;
-string outputFilename;*/
 
 // Convert an IPv4 address in bytes to readable string format.
 string getHostString(u_char* host) {
@@ -118,7 +108,7 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     struct tm* lt = localtime(&pkthdr->ts.tv_sec);
     char timebuf[32], utimebuf[32];
     strftime(timebuf, sizeof timebuf, "%Y-%m-%d %H:%M:%S", lt);
-    snprintf(utimebuf, sizeof utimebuf, "%s.%03ld ", timebuf, pkthdr->ts.tv_usec / 1000L);
+    snprintf(utimebuf, sizeof utimebuf, "%s.%03ld", timebuf, pkthdr->ts.tv_usec / 1000L);
     
     // Check if packet received in last 5 seconds
     struct timeval now;
@@ -145,13 +135,22 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
         ptr += sizeof(struct ip);
         if (ipStruct->ip_v == 4) {
             packetType = "IPv4";
+            sourceStr = inet_ntoa(ipStruct->ip_src);
+            destStr = inet_ntoa(ipStruct->ip_dst);
             if (ipStruct->ip_p == 6) {
-                sourceStr = inet_ntoa(ipStruct->ip_src);
-                destStr = inet_ntoa(ipStruct->ip_dst);
+                packetType += "/TCP";
                 const struct tcphdr* tcpStruct = (struct tcphdr*) ptr;
                 ptr += sizeof(struct tcphdr);
                 srcPort = ntohs(tcpStruct->source);
                 destPort = ntohs(tcpStruct->dest);
+                knownPorts = true;
+            }
+            else if (ipStruct->ip_p == 17) {
+                packetType += "/UDP";
+                const struct udphdr* udpStruct = (struct udphdr*) ptr;
+                ptr += sizeof(struct udphdr);
+                srcPort = ntohs(udpStruct->source);
+                destPort = ntohs(udpStruct->dest);
                 knownPorts = true;
             }
         }
@@ -160,6 +159,7 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     // Else if it is IPv6
     else if (ntohs(ehdr->ether_type) == ETHERTYPE_IPV6) {
         char* ip6 = ptr;
+        ptr += 40; // length of IPv6 header
         u_char ipv = ip6[0x00] >> 4;
         if (ipv == 6) {
             packetType = "IPv6";
@@ -172,11 +172,32 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
             }
             sourceStr = getIP6HostString(ipSrc);
             destStr = getIP6HostString(ipDst);
+            int* nextHeader = (int*) ip6[6];
+            *nextHeader = ntohl(*nextHeader);
+            if (*nextHeader == 6) {
+                packetType += "/TCP";
+                const struct tcphdr* tcpStruct = (struct tcphdr*) ptr;
+                ptr += sizeof(struct tcphdr);
+                srcPort = ntohs(tcpStruct->source);
+                destPort = ntohs(tcpStruct->dest);
+                knownPorts = true;
+            }
+            else if (*nextHeader == 17) {
+                packetType += "/UDP";
+                const struct udphdr* udpStruct = (struct udphdr*) ptr;
+                ptr += sizeof(struct udphdr);
+                srcPort = ntohs(udpStruct->source);
+                destPort = ntohs(udpStruct->dest);
+                knownPorts = true;
+            }
         }
+    }
+    else if (ntohs(ehdr->ether_type) == ETHERTYPE_ARP) {
+        packetType = "ARP";
     }
     // Print row
     char buffer[256] = { '\0' };
-    sprintf(buffer, "%23s %4s %17s", utimebuf, packetType.c_str(), sourceStr.c_str());
+    sprintf(buffer, "%23s %-8s %17s", utimebuf, packetType.c_str(), sourceStr.c_str());
     ss << buffer;
     if (knownPorts) {
         sprintf(buffer, "%-5u", srcPort);
@@ -357,7 +378,7 @@ void* updateDisplay(void* voidState) {
                 ss << "\033[33m";
                 ss << clearline << "Latest packets sniffed:\n";
                 ss << clearline;
-                ss << "-----------------------   Pkt            Source       Destination\n";
+                ss << "----------------------- Packet              Source [Port]     Destination [Port]\n";
                 for (int i = 4; i >= 0; i--) {
                     ss << printPacket(state, i, true);
                 }
