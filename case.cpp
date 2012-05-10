@@ -85,7 +85,8 @@ Case new_case(char *input, char *output, Case the_case) {
 Case open_case(char *name, char *output, Case the_case) {
     char buffer[BUFFER_SIZE] = { '\0' };
     FILE *lock = NULL;
-    /* See if the case is free */
+
+    /* See if a lock exists */
     sprintf(buffer, "./cases/%s/lock", name);
     lock = fopen(buffer, "r");
     if(lock) {
@@ -93,21 +94,24 @@ Case open_case(char *name, char *output, Case the_case) {
         sprintf(output, "Error: The case %s is currently in use by another user.\n", name);
         return the_case;
     }
-    lock = fopen(buffer, "w");
-    fprintf(lock, "This case is open.\n");
-    fclose(lock);
 
+    /* Make sure this case exists */
     sprintf(buffer, "./cases/%s", name);
     sprintf(the_case.case_name, name);
-
     the_case.case_directory = opendir(buffer);
     if(!the_case.case_directory) {
         sprintf(output, "Error: Case %s not found.\n", name);
         return the_case;
     }
     
+    /* Lock the case */ 
+    sprintf(buffer, "./cases/%s/lock", name);
+    lock = fopen(buffer, "w");
+    fprintf(lock, "This case is open.\n");
+    fclose(lock);   
     sprintf(buffer, "./cases/%s/log.txt", name);
 
+    /* Open the log */
     the_case.log = fopen(buffer, "a+");
     if(!the_case.log) {
         fprintf(stderr, "Error: Log file not accessable.\n");
