@@ -235,7 +235,7 @@ Case parse(Case current_case, char *input, char *output) {
 	    /* Hex edit */
 	    else if(!strncmp(input, "hexedit", 8)){
 		if(current_case.log) {
-	        put_output(current_case, "File path");
+	        put_output(current_case, "File path\n");
 		string filename = get_input_string(current_case);
 		hexEdit(current_case, filename);
 		}

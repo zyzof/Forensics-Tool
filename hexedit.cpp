@@ -123,7 +123,7 @@ void replace(Case current_case, string filename){
   char c = infile.peek();
   stringstream ss;
   //Prepare printout
-  ss << "Replacing char at pos " << posString << ": " << hex << c << " --> " << replacement;
+  ss << "Replacing char at pos " << posString << ": " << hex << (int)c << " --> " << replacement;
 
   //Put the character at that position
   infile.put(h);
