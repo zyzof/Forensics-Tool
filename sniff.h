@@ -33,12 +33,14 @@ typedef struct SnifferState_struct {
     bool scanDetected;
     timeval scanDetectedTime;
     
-    ofstream* packetOutput;
+    ofstream* textPacketOutput;
+    ofstream* rawPacketOutput;
     struct pcap_pkthdr* recentHdrs[5];
     u_char* recentPkts[5];
     pthread_t sniffThreads[2];
     string* sniffDev;
-    string* outputFilename;
+    string* textOutputFilename;
+    string* rawOutputFilename;
 } SnifferState;
 
 void start_sniff(Case* currentCase);

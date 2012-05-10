@@ -30,6 +30,9 @@ using namespace std;
 // Maximum delay time between different-port connections to detect port scan (seconds).
 #define MAX_DELAY_TIME 5
 
+#define TEXT_PACKETS_FILE "log_packets.txt"
+#define  RAW_PACKETS_FILE "raw_packets.dat"
+
 // Class representing a host that is potentially trying to do a port scan.
 Host::Host(struct in_addr src, struct in_addr dst) {
     this->sAddr = src;
@@ -96,14 +99,18 @@ string getIP6HostString(u_char* host) {
 }
 
 // Print an individual row of a packet in the display.
-string printPacket(SnifferState* state, int i) {
+string printPacket(SnifferState* state, int i, bool printCtrlChars) {
     const struct pcap_pkthdr* pkthdr = state->recentHdrs[i];
     u_char* packet = state->recentPkts[i];
     stringstream ss;
     // Clear entire line
-    ss << "\033[2K";
+    if (printCtrlChars) {
+        ss << "\033[2K";
+    }
     if (pkthdr == NULL) {
-        ss << "\n";
+        if (printCtrlChars) {
+            ss << "\n";
+        }
         return ss.str();
     }
     
@@ -116,7 +123,7 @@ string printPacket(SnifferState* state, int i) {
     // Check if packet received in last 5 seconds
     struct timeval now;
     gettimeofday(&now, NULL);
-    if (now.tv_sec < pkthdr->ts.tv_sec + 5) {
+    if (now.tv_sec < pkthdr->ts.tv_sec + 5 && printCtrlChars) {
         // Set bright
         ss << "\033[1m";
     }
@@ -159,7 +166,9 @@ string printPacket(SnifferState* state, int i) {
     sprintf(buffer, "%23s %4s %17s %17s\n", utimebuf, packetType.c_str(), sourceStr.c_str(), destStr.c_str());
     ss << buffer;
     // Set normal yellow text (if bright)s
-    ss << "\033[m\033[33m";
+    if (printCtrlChars) {
+        ss << "\033[m\033[33m";
+    }
     return ss.str();
 }
 
@@ -218,8 +227,8 @@ void processPacket(u_char* charState, const struct pcap_pkthdr* pkthdr, const u_
     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
     
     // Write raw packet to output file
-    state->packetOutput->write((char*) &pkthdr, sizeof(struct pcap_pkthdr));
-    state->packetOutput->write((char*) &packet, pkthdr->caplen);
+    state->rawPacketOutput->write((char*) &pkthdr, sizeof(struct pcap_pkthdr));
+    state->rawPacketOutput->write((char*) &packet, pkthdr->caplen);
     
     // Add new packet to recent packet list.
     for (int i = 4; i > 0; i--) {
@@ -230,6 +239,11 @@ void processPacket(u_char* charState, const struct pcap_pkthdr* pkthdr, const u_
     state->recentPkts[0] = (u_char*) malloc(pkthdr->caplen);
     memcpy(state->recentHdrs[0], pkthdr, sizeof(struct pcap_pkthdr));
     memcpy(state->recentPkts[0], packet, pkthdr->caplen);
+    
+    // Write text packet to packet log file
+    string packetStr = printPacket(state, 0, false);
+    state->textPacketOutput->write(packetStr.c_str(), packetStr.length());
+    state->textPacketOutput->flush();
     
     // If port scan detecting, let it process packet too
     if (state->psd) {
@@ -279,12 +293,17 @@ void* sniff(void* voidState) {
     pcap_set_promisc(p, 1);
     pcap_set_timeout(p, -1);
     int status = pcap_activate(p);
-    state->packetOutput = new ofstream(state->outputFilename->c_str(), ios::out | ios::binary);
-    if (state->packetOutput->fail()) {
-        put_output(*state->currentCase, ("Unable to open output stream \"" + *state->outputFilename + "\".\n").c_str());
+    state->textPacketOutput = new ofstream(state->textOutputFilename->c_str(), ios::out);
+    if (state->textPacketOutput->fail()) {
+        put_output(*state->currentCase, ("Unable to open output stream \"" + *state->textOutputFilename + "\".\n").c_str());
+    }
+    state->rawPacketOutput = new ofstream(state->rawOutputFilename->c_str(), ios::out | ios::binary);
+    if (state->rawPacketOutput->fail()) {
+        put_output(*state->currentCase, ("Unable to open output stream \"" + *state->rawOutputFilename + "\".\n").c_str());
     }
     pcap_loop(p, -1, processPacket, (u_char*) state);
-    state->packetOutput->close();
+    state->textPacketOutput->close();
+    state->rawPacketOutput->close();
 }
 
 void* updateDisplay(void* voidState) {
@@ -310,7 +329,7 @@ void* updateDisplay(void* voidState) {
                 ss << clearline;
                 ss << "-----------------------   Pkt            Source       Destination\n";
                 for (int i = 4; i >= 0; i--) {
-                    ss << printPacket(state, i);
+                    ss << printPacket(state, i, true);
                 }
                 ss <<  clearline;
                 ss << "-----------------------------------------------------------------\n";
@@ -410,17 +429,15 @@ void start_sniff(Case* currentCase) {
             devSelected = true;
         }
     }
-    state->outputFilename = new string("");
-    while (state->outputFilename->length() == 0) {
-        put_output(*currentCase, "\nEnter name of output file: ");
-        get_input(*currentCase, input);
-        *state->outputFilename = input;
-    }
-    string origFilename = *state->outputFilename;
+    state->textOutputFilename = new string("");
+    state->rawOutputFilename = new string("");
     char filename[BUFFER_SIZE] = { '\0' };
-    strcpy(filename, state->outputFilename->c_str());
+    strcpy(filename, TEXT_PACKETS_FILE);
     file_string(*currentCase, filename);
-    *state->outputFilename = filename;
+    *state->textOutputFilename = filename;
+    strcpy(filename, RAW_PACKETS_FILE);
+    file_string(*currentCase, filename);
+    *state->rawOutputFilename = filename;
     
     put_output(*currentCase, "\nShow latest packets sniffed? [y/n] ");
     string answer;
@@ -434,7 +451,9 @@ void start_sniff(Case* currentCase) {
     }
     
     char c[128] = { '\0' };
-    string str = "Packet sniffing started on device \"" + *state->sniffDev + "\", saving to file \"" + origFilename + "\".";
+    string str = "Packet sniffing started on device \"" + *state->sniffDev
+        + "\", logging packets to file \"" + TEXT_PACKETS_FILE
+        + "\" and saving raw packets to file \"" + RAW_PACKETS_FILE + "\".";
     memcpy(&c, str.c_str(), str.size() + 1);
     log_text(*currentCase, c);
     
