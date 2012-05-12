@@ -98,8 +98,8 @@ Case parse(Case current_case, char *input, char *output) {
         }
         else {
             remote_access(input + 8);
-            }
         }
+    }
 
     /* server */ /* Shold be controlled localy */
     else if(!strncmp(input, "server ", 7)) {

@@ -64,7 +64,7 @@ void remote_access(char *ip) {
         fprintf(stderr, "Error: Could not resolve address.\n");
     }
 
-
+    printf("Connecting...\n");
     /* Request connection */
     connect(the_socket, target_address_information->ai_addr, target_address_information->ai_addrlen);
 
@@ -97,15 +97,19 @@ void remote_access(char *ip) {
         }
         else if(!strncmp(in_buffer, "help", 5)) {
             main_menu_help();
+            printf("\nremote > ");
         }
         else if(!strncmp(in_buffer, "connect ", 8)) {
             printf("Error: Disconnect from current server before trying to connect to another.\n");
+            printf("\nremote > ");
         }
         else if(!strncmp(in_buffer, "server ", 7)) {
             printf("Error: Server must be controled locally.\n");
+            printf("\nremote > ");
         }
         else if(!strncmp(in_buffer, "navigator", 10)) {
             printf("Sorry: File navigator only local.\n");
+            printf("\nremote > ");
         }
         else { /* Send data to the remote program */
             write(the_socket, in_buffer, strnlen(in_buffer, BUFFER_SIZE));
