@@ -172,7 +172,7 @@ string printPacket(SnifferState* state, int i, bool printCtrlChars) {
             }
             sourceStr = getIP6HostString(ipSrc);
             destStr = getIP6HostString(ipDst);
-            int* nextHeader = (int*) ip6[6];
+            int* nextHeader = (int*) (ip6 + 6);
             *nextHeader = ntohl(*nextHeader);
             if (*nextHeader == 6) {
                 packetType += "/TCP";
