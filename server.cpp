@@ -110,7 +110,8 @@ void get_input(Case current_case, char *input) {
     int n = 0;
     if(current_case.local) {
         /* We want to read a line from the local terminal */
-        gets(input);
+        fgets(input, BUFFER_SIZE, stdin);
+        input[strlen(input)-1] = '\0';
     }
     else {
         /* We want to read a line from the remote client */

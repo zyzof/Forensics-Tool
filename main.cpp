@@ -57,7 +57,8 @@ int case_manager() {
 
         while(1) {
             index = 0;
-            gets(input_buffer);
+            fgets(input_buffer, BUFFER_SIZE, stdin);
+            input_buffer[strlen(input_buffer)-1] = '\0';
 
             index += sprintf(output_buffer, "\n");
 

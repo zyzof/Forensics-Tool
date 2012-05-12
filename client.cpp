@@ -89,7 +89,8 @@ void remote_access(char *ip) {
     printf("\nremote > ");
     while(connected) {
         /* Read input */ /* This should be made non-blocking */
-        gets(in_buffer);
+        fgets(in_buffer, BUFFER_SIZE, stdin);
+        in_buffer[strlen(in_buffer)-1] = '\0';
         if(!strncmp(in_buffer, "exit", 5)) {
             /* Close the connection */
             connected = 0;
