@@ -43,7 +43,7 @@ int case_manager() {
 
     DIR *cases = opendir("./cases/");
     if(!cases) { /* Directory does not exist yet */
-        mkdir("./cases/", S_IRWXU | S_IRWXG); /* So we better create it */
+        mkdir("./cases/", S_IRWXU | S_IRWXG | S_IRWXO); /* So we better create it */
     }
     closedir(cases);
 

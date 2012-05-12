@@ -40,7 +40,6 @@ void clear_locks() {
     char buffer[BUFFER_SIZE] = { '\0' };
     struct dirent *this_case;
     DIR *cases = opendir("./cases/");
-    
     while(this_case = readdir(cases)) { /* Cases are represented by directories */
         if(this_case->d_type == DT_DIR
           && strncmp(this_case->d_name, ".", 2)
@@ -119,7 +118,7 @@ Case open_case(char *name, char *output, Case the_case) {
     sprintf(the_case.case_name, "%s", name);
     the_case.case_directory = opendir(buffer);
     if(!the_case.case_directory) {
-        sprintf(output, "Error: Case %s not found.\n", name);
+        sprintf(output, "Error: Case %s not found. (You may not have permission to access this case.)\n", name);
         return the_case;
     }
     

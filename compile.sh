@@ -1,2 +1,1 @@
-g++ -o tool *.cpp -lpthread -lpcap
-
+g++ -w -o tool *.cpp -lpthread -lpcap
