@@ -414,11 +414,11 @@ void* updateDisplay(void* voidState) {
 
 void start_psd(Case* currentCase) {
     SnifferState* state = (SnifferState*) currentCase->snifferState;
-    if (state->psd) {
+    if (state != NULL && state->psd) {
         put_output(*currentCase, "\nPort scan detection is already running.");
         return;
     }
-    if (!state->sniffing) {
+    if (state == NULL || !state->sniffing) {
         put_output(*currentCase, "\nPacket sniffer must be started before port scan detection can begin.");
     }
     else {
@@ -430,7 +430,7 @@ void start_psd(Case* currentCase) {
 
 void stop_psd(Case* currentCase) {
     SnifferState* state = (SnifferState*) currentCase->snifferState;
-    if (state->psd) {
+    if (state != NULL && state->psd) {
         state->psd = false;
         state->scanDetected = false;
         log_text(*currentCase, "Port scan detection stopped.");
@@ -520,7 +520,7 @@ void start_sniff(Case* currentCase) {
 
 void stop_sniff(Case* currentCase) {
     SnifferState* state = (SnifferState*) currentCase->snifferState;
-    if (!state->sniffing) {
+    if (state == NULL || !state->sniffing) {
         put_output(*currentCase, "\nError: Packet sniffer not running.");
         return;
     }
@@ -547,7 +547,7 @@ void stop_sniff(Case* currentCase) {
 
 void show_sniff(Case* currentCase) {
     SnifferState* state = (SnifferState*) currentCase->snifferState;
-    if (state->sniffing) {
+    if (state != NULL && state->sniffing) {
         if (state->showSniff) {
             put_output(*currentCase, "\nAlready showing recent packets.");
         }
@@ -563,7 +563,7 @@ void show_sniff(Case* currentCase) {
 
 void hide_sniff(Case* currentCase) {
     SnifferState* state = (SnifferState*) currentCase->snifferState;
-    if (state->sniffing) {
+    if (state != NULL && state->sniffing) {
         if (state->showSniff) {
             state->showSniff = false;
             put_output(*currentCase, "\nRecent packets hidden.");
