@@ -116,7 +116,7 @@ Case open_case(char *name, char *output, Case the_case) {
 
     /* Make sure this case exists */
     sprintf(buffer, "./cases/%s", name);
-    sprintf(the_case.case_name, name);
+    sprintf(the_case.case_name, "%s", name);
     the_case.case_directory = opendir(buffer);
     if(!the_case.case_directory) {
         sprintf(output, "Error: Case %s not found.\n", name);
