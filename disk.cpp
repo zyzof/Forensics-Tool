@@ -235,7 +235,7 @@ int print_primary(int disk_fd, unsigned char flags, char *output) {
     /* Look at the four primary partitions */
     for(partition = 0x01BE; partition < 0x01FE; partition += 0x10) {
         if(disk_mbr[partition + 0x04]) { /* If the partition type is not null */
-            index += sprintf(output + index, "\nPrimary partition record at MBR[%p]:\n", (unsigned char) partition);
+            index += sprintf(output + index, "\nPrimary partition record at MBR[%p]:\n", (void*)(unsigned char) partition);
         
             /* Status */
             switch(disk_mbr[partition]) {
